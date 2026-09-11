@@ -69,7 +69,7 @@
 - [x] Integrasi `svelte-i18n`
 - [x] English + Indonesian
 - [x] Locale file: `frontend/src/locales/`
-- [ ] Date/time/number formatting
+- [x] Date/time/number formatting
 
 ### 3.3 Testing
 - [x] Go unit tests (`*_test.go`) — 21 tests across all packages
