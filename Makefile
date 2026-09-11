@@ -45,8 +45,10 @@ check: lint ## Full check (lint + build)
 	cd $(FRONTEND_DIR) && npx svelte-check
 	wails build -ldflags "$(LDFLAGS)" -clean
 
-test: ## Run tests
+test: ## Run all tests (Go + frontend)
 	go test ./...
+	cd $(FRONTEND_DIR) && pnpm test
+	cd $(FRONTEND_DIR) && npx svelte-check --tsconfig ./tsconfig.json
 
 tidy: ## Tidy go modules
 	go mod tidy

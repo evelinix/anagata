@@ -18,6 +18,7 @@ export default ts.config(
         navigator: 'readonly',
         Event: 'readonly',
         CustomEvent: 'readonly',
+        MouseEvent: 'readonly',
       },
       parserOptions: {
         parser: ts.parser,

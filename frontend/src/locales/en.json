@@ -1,21 +1,44 @@
 {
   "app": {
     "title": "AnagataSentinel",
-    "subtitle": "Security Monitoring System"
+    "subtitle": "Security Monitoring System",
+    "description": "Real-time threat detection, network monitoring, and security analytics for your infrastructure."
   },
-  "greet": {
-    "placeholder": "Enter your name...",
-    "button": "Greet",
-    "result": "Hello {name}, It's show time!"
+  "status": {
+    "system": "System Status",
+    "online": "Online",
+    "offline": "Offline",
+    "threats": "Active Threats",
+    "monitors": "Active Monitors",
+    "lastScan": "Last Scan",
+    "noThreats": "No threats detected",
+    "never": "Never"
+  },
+  "actions": {
+    "dashboard": "Open Dashboard",
+    "dashboardDesc": "View real-time monitoring data",
+    "scan": "Run Quick Scan",
+    "scanDesc": "Scan system for vulnerabilities",
+    "settings": "Settings",
+    "settingsDesc": "Configure application preferences"
+  },
+  "features": {
+    "title": "Capabilities",
+    "monitoring": "Real-time Monitoring",
+    "monitoringDesc": "Continuous system and network surveillance",
+    "threats": "Threat Detection",
+    "threatsDesc": "Advanced malware and intrusion detection",
+    "analytics": "Security Analytics",
+    "analyticsDesc": "Comprehensive reporting and analysis",
+    "alerts": "Instant Alerts",
+    "alertsDesc": "Immediate notification of security events"
   },
   "theme": {
     "toggle": "Toggle theme",
     "light": "Light mode",
     "dark": "Dark mode"
   },
-  "nav": {
-    "home": "Home",
-    "settings": "Settings",
-    "about": "About"
+  "footer": {
+    "copyright": "AnagataSentinel"
   }
 }

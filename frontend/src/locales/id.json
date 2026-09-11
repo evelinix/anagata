@@ -1,21 +1,44 @@
 {
   "app": {
     "title": "AnagataSentinel",
-    "subtitle": "Sistem Monitoring Keamanan"
+    "subtitle": "Sistem Monitoring Keamanan",
+    "description": "Deteksi ancaman real-time, monitoring jaringan, dan analitik keamanan untuk infrastruktur Anda."
   },
-  "greet": {
-    "placeholder": "Masukkan nama Anda...",
-    "button": "Sapa",
-    "result": "Halo {name}, Saatnya pertunjukan!"
+  "status": {
+    "system": "Status Sistem",
+    "online": "Online",
+    "offline": "Offline",
+    "threats": "Ancaman Aktif",
+    "monitors": "Monitor Aktif",
+    "lastScan": "Pemindaian Terakhir",
+    "noThreats": "Tidak ada ancaman terdeteksi",
+    "never": "Belum pernah"
+  },
+  "actions": {
+    "dashboard": "Buka Dasbor",
+    "dashboardDesc": "Lihat data monitoring real-time",
+    "scan": "Pindai Cepat",
+    "scanDesc": "Pindai sistem untuk kerentanan",
+    "settings": "Pengaturan",
+    "settingsDesc": "Konfigurasi preferensi aplikasi"
+  },
+  "features": {
+    "title": "Kemampuan",
+    "monitoring": "Monitoring Real-time",
+    "monitoringDesc": "Pengawasan sistem dan jaringan berkelanjutan",
+    "threats": "Deteksi Ancaman",
+    "threatsDesc": "Deteksi malware dan intrusi tingkat lanjut",
+    "analytics": "Analitik Keamanan",
+    "analyticsDesc": "Pelaporan dan analisis komprehensif",
+    "alerts": "Alert Instan",
+    "alertsDesc": "Notifikasi segera dari peristiwa keamanan"
   },
   "theme": {
     "toggle": "Ubah tema",
     "light": "Mode terang",
     "dark": "Mode gelap"
   },
-  "nav": {
-    "home": "Beranda",
-    "settings": "Pengaturan",
-    "about": "Tentang"
+  "footer": {
+    "copyright": "AnagataSentinel"
   }
 }
