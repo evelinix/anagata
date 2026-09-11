@@ -10,8 +10,12 @@ build/bin/
 frontend/dist/
 frontend/node_modules/
 
+# Root node_modules (husky + lint-staged)
+node_modules/
+
 # Runtime data
 data/
+logs/
 
 # IDE
 .vscode/

@@ -39,9 +39,9 @@
 
 ### 2.2 Code Quality
 - [x] `.golangci.yml` — Go linter config
-- [ ] `frontend/.eslintrc.json` — ESLint config
-- [ ] `frontend/.prettierrc` — Prettier config
-- [ ] Pre-commit hooks (husky + lint-staged)
+- [x] `frontend/eslint.config.js` — ESLint config
+- [x] `frontend/.prettierrc` — Prettier config
+- [x] Pre-commit hooks (husky + lint-staged)
 
 ### 2.3 Build Versioning
 - [x] Inject version via `ldflags` saat build

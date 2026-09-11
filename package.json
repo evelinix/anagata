@@ -1,0 +1,29 @@
+{
+  "name": "anagatasentinel",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "prepare": "husky",
+    "lint": "cd frontend && pnpm lint",
+    "lint:fix": "cd frontend && pnpm lint:fix",
+    "format": "cd frontend && pnpm format",
+    "format:check": "cd frontend && pnpm format:check",
+    "check": "cd frontend && npx svelte-check"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{ts,svelte}": [
+      "pnpm --dir frontend exec eslint --fix",
+      "pnpm --dir frontend exec prettier --write"
+    ],
+    "frontend/src/**/*.css": [
+      "pnpm --dir frontend exec prettier --write"
+    ],
+    "**/*.go": [
+      "gofmt -s -w"
+    ]
+  }
+}

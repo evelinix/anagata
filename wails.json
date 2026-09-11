@@ -7,7 +7,7 @@
   "frontend:dev:watcher": "pnpm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Eve Lin",
+    "email": "207277820+evelinix@users.noreply.github.com"
   }
 }

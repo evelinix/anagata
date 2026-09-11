@@ -14,7 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AppError type with level, stage, message, retriable flag
 - Build versioning with ldflags (version, commit, build time, go version)
 - Version() and GetVersionInfo() methods for frontend access
-- golangci-lint configuration
+- golangci-lint configuration for Go
+- ESLint + Prettier configuration for frontend
+- Pre-commit hooks with husky + lint-staged
 - Database migration system with versioned SQL files
 - `make version` command to show build info
 - Unit tests for config, logger, errors, and version (13 tests total)

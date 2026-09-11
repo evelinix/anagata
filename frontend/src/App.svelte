@@ -1,14 +1,14 @@
 <script lang="ts">
-  import logo from './assets/images/logo-universal.png'
-  import { Greet } from '../wailsjs/go/app/App'
+  import logo from './assets/images/logo-universal.png';
+  import { Greet } from '../wailsjs/go/app/App';
 
-  let resultText = $state('Please enter your name below 👇')
-  let name = $state('')
+  let resultText = $state('Please enter your name below 👇');
+  let name = $state('');
 
   function greet() {
     Greet(name).then((result: string) => {
-      resultText = result
-    })
+      resultText = result;
+    });
   }
 </script>
 

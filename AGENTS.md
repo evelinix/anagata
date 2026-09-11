@@ -18,7 +18,8 @@ Wails v2 desktop app — Go backend + Svelte 5 frontend embedded in a native Web
 | `make check` | Lint + build + svelte-check |
 | `make rename NEW=Name` | Rename project across all files |
 | `make version` | Show current version info |
-| `cd frontend && npx svelte-check` | Type-check Svelte files |
+| `cd frontend && pnpm lint` | ESLint frontend |
+| `cd frontend && pnpm format` | Prettier format frontend |
 
 ## Architecture
 
