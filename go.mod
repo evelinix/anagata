@@ -6,6 +6,7 @@ require (
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
 	github.com/wailsapp/wails/v2 v2.15.0
+	gopkg.in/yaml.v3 v3.0.1
 	gosqlite.org v0.14.0
 	gosqlite.org/vfs/crypto v0.14.0
 )

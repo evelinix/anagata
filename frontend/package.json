@@ -8,9 +8,6 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
-  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.0.0",
     "@tailwindcss/vite": "^4.0.0",

@@ -2,9 +2,12 @@ package main
 
 import (
 	"embed"
-	"log"
+	"log/slog"
 
 	"AnagataSentinel/internal/app"
+	"AnagataSentinel/internal/config"
+	"AnagataSentinel/internal/logger"
+	"AnagataSentinel/internal/version"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,15 +18,28 @@ import (
 var assets embed.FS
 
 func main() {
+	cfg, err := config.Load()
+	if err != nil {
+		slog.Error("failed to load config", "error", err)
+		panic(err)
+	}
+
+	logger.Setup(&cfg.Logging)
+	slog.Info("application starting",
+		"app", cfg.App.Name,
+		"version", version.Version,
+		"commit", version.GitCommit[:min(8, len(version.GitCommit))],
+	)
+
 	a := app.NewApp()
 
-	err := wails.Run(&options.App{
-		Title:  "AnagataSentinel",
-		Width:  1280,
-		Height: 800,
+	err = wails.Run(&options.App{
+		Title:  cfg.App.Name,
+		Width:  cfg.Window.Width,
+		Height: cfg.Window.Height,
 
-		MinWidth:  1024,
-		MinHeight: 640,
+		MinWidth:  cfg.Window.MinWidth,
+		MinHeight: cfg.Window.MinHeight,
 
 		DisableResize: false,
 
@@ -50,6 +66,14 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("failed to run application", "error", err)
+		panic(err)
 	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

@@ -1,0 +1,28 @@
+# AnagataSentinel Configuration
+# Copy this file to %APPDATA%/AnagataSentinel/config.yaml
+
+app:
+  name: "AnagataSentinel"
+  version: "0.1.0"
+  debug: false
+
+window:
+  width: 1280
+  height: 800
+  min_width: 1024
+  min_height: 640
+
+database:
+  path: "data/sentinel.db"
+  password: ""  # Override via env: ANAGATA_DB_PASSWORD
+
+logging:
+  level: "info"       # debug, info, warn, error
+  file: "logs/app.log"
+  max_size_mb: 50
+  max_backups: 3
+  compress: true
+
+splash:
+  enabled: true
+  duration_ms: 10000

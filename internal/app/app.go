@@ -3,22 +3,26 @@ package app
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"sync"
-	"time"
 
+	"AnagataSentinel/internal/config"
 	"AnagataSentinel/internal/database"
+	apperrors "AnagataSentinel/internal/errors"
+	"AnagataSentinel/internal/logger"
 	"AnagataSentinel/internal/splash"
+	"AnagataSentinel/internal/version"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
-	ctx context.Context
+	ctx    context.Context
+	config *config.Config
 
 	splash *splash.NativeSplash
 
-	startupError  error
+	startupError  *apperrors.AppError
 	backendReady chan struct{}
 	domReady     chan struct{}
 	initOnce     sync.Once
@@ -34,12 +38,12 @@ func NewApp() *App {
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 
-	log.Println("[BOOT] Application startup")
+	slog.Info("application startup")
 
 	a.splash = splash.NewNativeSplash()
 
 	if err := a.splash.Start(); err != nil {
-		log.Printf("[BOOT] Splash error: %v", err)
+		slog.Error("splash error", "error", err)
 	}
 
 	go func() {
@@ -55,7 +59,7 @@ func (a *App) Startup(ctx context.Context) {
 }
 
 func (a *App) initializeBackend() {
-	log.Println("[BOOT] Initializing backend")
+	slog.Info("initializing backend")
 
 	stages := []struct {
 		name    string
@@ -72,44 +76,61 @@ func (a *App) initializeBackend() {
 		a.splash.SetStatus(stage.name + "...")
 
 		if err := stage.handler(); err != nil {
-			log.Printf("[BOOT] Stage '%s' failed: %v", stage.name, err)
-			a.startupError = err
+			slog.Error("boot stage failed", "stage", stage.name, "error", err)
+			a.startupError = apperrors.Wrap(stage.name, err)
 			return
 		}
 
-		log.Printf("[BOOT] Stage '%s' complete", stage.name)
+		slog.Info("boot stage complete", "stage", stage.name)
 	}
 
-	log.Println("[BOOT] Backend initialization complete")
+	slog.Info("backend initialization complete")
 }
 
 func (a *App) bootConfig() error {
-	time.Sleep(2 * time.Second)
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("load config: %w", err)
+	}
+	a.config = cfg
+	logger.Setup(&cfg.Logging)
 	return nil
 }
 
 func (a *App) bootDatabase() error {
-	return database.Init()
+	return database.Init(a.config)
 }
 
 func (a *App) bootSecurity() error {
-	time.Sleep(2 * time.Second)
 	return nil
 }
 
 func (a *App) bootServices() error {
-	time.Sleep(2 * time.Second)
 	return nil
 }
 
 func (a *App) bootFinalize() error {
-	time.Sleep(2 * time.Second)
 	return nil
 }
 
 func (a *App) showMainApp() {
 	a.initOnce.Do(func() {
-		log.Println("[BOOT] Showing main application")
+		if a.startupError != nil {
+			slog.Error("startup error", "stage", a.startupError.Stage, "error", a.startupError)
+			retry := apperrors.ShowDialog(a.startupError)
+			if retry {
+				slog.Info("retrying failed stage", "stage", a.startupError.Stage)
+				a.startupError = nil
+				a.initOnce = sync.Once{}
+				a.initializeBackend()
+				close(a.backendReady)
+				return
+			}
+			runtime.Quit(a.ctx)
+			return
+		}
+
+		slog.Info("showing main application")
 
 		runtime.WindowShow(a.ctx)
 
@@ -118,17 +139,17 @@ func (a *App) showMainApp() {
 			a.splash = nil
 		}
 
-		log.Println("[BOOT] Application ready")
+		slog.Info("application ready")
 	})
 }
 
 func (a *App) DOMReady(ctx context.Context) {
-	log.Println("[BOOT] DOM ready")
+	slog.Info("DOM ready")
 	close(a.domReady)
 }
 
 func (a *App) Shutdown(ctx context.Context) {
-	log.Println("[BOOT] Application shutdown")
+	slog.Info("application shutdown")
 
 	database.Close()
 
@@ -140,4 +161,17 @@ func (a *App) Shutdown(ctx context.Context) {
 
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func (a *App) Version() string {
+	return version.Info()
+}
+
+func (a *App) GetVersionInfo() map[string]string {
+	return map[string]string{
+		"version":   version.Version,
+		"commit":    version.GitCommit,
+		"buildTime": version.BuildTime,
+		"goVersion": version.GoVersion,
+	}
 }

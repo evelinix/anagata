@@ -1,0 +1,44 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - bodyclose
+    - durationcheck
+    - exportloopref
+    - gofmt
+    - goimports
+    - gosec
+    - misspell
+    - nilerr
+    - prealloc
+    - unconvert
+    - unparam
+    - whitespace
+
+linters-settings:
+  govet:
+    check-shadowing: false
+  gosec:
+    excludes:
+      - G104  # Unhandled errors
+      - G304  # File path provided as taint input
+  goimports:
+    local-prefixes: AnagataSentinel
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - unparam
+    - path: splash_other\.go
+      linters:
+        - unused
