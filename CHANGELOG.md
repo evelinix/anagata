@@ -8,29 +8,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Dark/Light mode with system preference detection and localStorage persistence
-- Internationalization (i18n) with svelte-i18n (EN + ID locales)
-- Language toggle button in UI
-- Auto-updater with GitHub release check (periodic, 1 hour interval)
-- CheckForUpdate() method exposed to frontend
-- internal/updater package with GitHub API integration
-- Vitest frontend testing with @testing-library/svelte
-- Go unit tests for all internal packages (21 tests total)
-- ESLint flat config with Svelte 5 + TypeScript
-- Prettier configuration for consistent formatting
-- Pre-commit hooks with husky + lint-staged
+- **Log rotation** (`internal/logger/rotator.go`)
+  - Size-based rotation (configurable via `max_size_mb`)
+  - Active log: `logs/app.log`
+  - Rotated logs: `logs/{year}/{month}_{date}.log`
+  - Counter suffix for multiple rotations same day
+  - `ArchiveActiveLog()` for graceful shutdown archiving
+  - 5 unit tests (rotation, counter, close, initial size, interface)
+
+- **ANTS Design System** (`frontend/src/style.css`)
+  - Based on Microsoft WinUI 3 / Fluent Design
+  - CSS custom properties for light/dark themes
+  - Typography scale (display → caption)
+  - Border radius, spacing, elevation tokens
+  - Animation duration/easing tokens
+
+- **ANTS Components** (`frontend/src/lib/components/`)
+  - `Button` — 6 variants (primary, secondary, danger, ghost, outline, subtle), 3 sizes
+  - `Input` — Error state, 3 sizes, label/placeholder support
+  - `Card` — 4 variants (default, filled, outlined, acrylic)
+  - `IconButton` — 4 variants, 3 sizes, icon-only (aria-label only)
+  - `Typography` — 12 variants, 9 colors, dynamic HTML element, auto-weight for strong variants
+  - `icons/` — 11 SVG icon components (IconBase + individual icons)
+
+- **Date/time/number formatting** (`frontend/src/lib/i18n/format.ts`)
+  - `formatDate`, `formatDateShort`, `formatTime`, `formatDateTime`
+  - `formatNumber`, `formatCurrency`, `formatPercent`
+  - `formatRelative` (relative time: "2 hours ago")
+  - Uses `Intl.DateTimeFormat` / `NumberFormat` (browser-native)
+  - 15 tests
+
+- **Frontend test infrastructure**
+  - Vitest + jsdom + @testing-library/svelte + @testing-library/jest-dom
+  - `vite.config.ts` with `resolve.conditions: ['browser']`
+  - `src/vitest-setup.ts` with cleanup + jest-dom matchers
+  - `src/vite-env.d.ts` with Svelte type references + asset declarations
+  - 81 total tests across 7 test files
+
+- **Custom i18n system** (`frontend/src/lib/i18n/`)
+  - Custom implementation with `CustomEvent` dispatch (replaced svelte-i18n)
+  - EN + ID locales in `src/locales/`
+  - Reactive via `$state` + `localeVersion` counter
+  - `tl()` wrapper function for reactivity
+
+- **Splash tests** (`internal/splash/splash_test.go`)
+  - 6 tests (3 unconditional, 3 require `WALK_GUI_TEST=1`)
+  - Tests: NewNativeSplash, SetStatusBeforeStart, CloseBeforeStart, Start, SetStatus, CloseIdempotent
 
 ### Changed
-- Config system with YAML support and env variable override
-- Structured logging with slog (JSON file + text console output)
-- Error handling UI with Walk dialog (Retry/Close)
-- Build versioning with ldflags (version, commit, build time, go version)
-- Database migration system with versioned SQL files
-- Config file location changed to executable directory (portable deployment)
+- **CSS prefix renamed**: `winui-` → `ants-`
+  - All component classes: `ants-btn`, `ants-card`, `ants-input`, `ants-icon-btn`
+  - All variant/size modifiers updated
+
+- **Icon system**: Replaced `@tabler/icons-svelte` (incompatible with Svelte 5 runes) with custom SVG icon components
+  - `IconBase.svelte` — shared SVG wrapper with size/stroke/color/style props
+  - 11 individual icon components using IconBase
+  - All icons support `style` prop for inline color overrides
+
+- **Typography component** used throughout `App.svelte`
+  - Replaced all inline style text with `<Typography>` component
+  - Added `info` color token
+  - Added `class`/`style` props for external styling
+
+- **IconButton**: `label` prop now only sets `aria-label` (accessibility), no visible text rendered
+
+- **App.svelte**: All icons now use custom SVG components (IconWorld, IconSun, IconMoon, etc.)
+
+- **Project metadata** updated:
+  - `package.json`: Added author, description, license, repository, homepage, bugs, keywords
+  - `LICENSE`: Updated copyright holder to Eve Lin
+  - `README.md`: Added author info, tech stack table, full project structure
 
 ### Removed
-- Removed `%APPDATA%` dependency for config location
-- Removed root-level logo files (cleaned up)
+- `@tabler/icons-svelte` package (uses legacy `$$props`, incompatible with Svelte 5 runes mode)
 
 ---
 
@@ -56,5 +106,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/youruser/AnagataSentinel/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/youruser/AnagataSentinel/releases/tag/v0.1.0
+[Unreleased]: https://github.com/evelinix/AnagataSentinel/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/evelinix/AnagataSentinel/releases/tag/v0.1.0
