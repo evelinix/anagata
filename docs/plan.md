@@ -60,26 +60,26 @@
 ## Phase 3: User Experience (Prioritas Rendah)
 
 ### 3.1 Dark/Light Mode
-- [ ] Toggle di header/sidebar
-- [ ] Persist preference ke database
-- [ ] System preference detection
-- [ ] Smooth transition animation
+- [x] Toggle di header/sidebar
+- [x] Persist preference ke localStorage
+- [x] System preference detection
+- [x] Smooth transition animation (Tailwind `transition-colors`)
 
 ### 3.2 Internationalization (i18n)
-- [ ] Integrasi `svelte-i18n`
-- [ ] English + Indonesian
-- [ ] Locale file: `frontend/src/locales/`
+- [x] Integrasi `svelte-i18n`
+- [x] English + Indonesian
+- [x] Locale file: `frontend/src/locales/`
 - [ ] Date/time/number formatting
 
 ### 3.3 Testing
-- [ ] Go unit tests (`*_test.go`)
+- [x] Go unit tests (`*_test.go`) — 21 tests across all packages
 - [ ] Go integration tests
-- [ ] Frontend unit tests (Vitest)
-- [ ] Frontend component tests (Testing Library)
+- [x] Frontend unit tests (Vitest)
+- [x] Frontend component tests (Testing Library)
 - [ ] E2E tests (Playwright)
 
 ### 3.4 Auto-Updater
-- [ ] Check GitHub releases periodically
+- [x] Check GitHub releases periodically (1 hour interval)
 - [ ] Download & prompt update
 - [ ] Silent update option
 - [ ] Update changelog display
@@ -128,5 +128,5 @@
 | 2026-09-10 | Enterprise template | ✅ Done |
 | 2026-09-11 | Phase 1: Config + Logging + Error UI | ✅ Done |
 | 2026-09-11 | Phase 2: Code Quality + Versioning + Migrations | ✅ Done |
-| - | Phase 3: UX + Testing | 🔲 Pending |
+| 2026-09-11 | Phase 3: Dark Mode + i18n + Testing + Updater | ✅ Done |
 | - | Phase 4: Features | 🔲 Pending |

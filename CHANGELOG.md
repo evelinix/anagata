@@ -8,29 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Dark/Light mode with system preference detection and localStorage persistence
+- Internationalization (i18n) with svelte-i18n (EN + ID locales)
+- Language toggle button in UI
+- Auto-updater with GitHub release check (periodic, 1 hour interval)
+- CheckForUpdate() method exposed to frontend
+- internal/updater package with GitHub API integration
+- Vitest frontend testing with @testing-library/svelte
+- Go unit tests for all internal packages (21 tests total)
+- ESLint flat config with Svelte 5 + TypeScript
+- Prettier configuration for consistent formatting
+- Pre-commit hooks with husky + lint-staged
+
+### Changed
 - Config system with YAML support and env variable override
 - Structured logging with slog (JSON file + text console output)
 - Error handling UI with Walk dialog (Retry/Close)
-- AppError type with level, stage, message, retriable flag
 - Build versioning with ldflags (version, commit, build time, go version)
-- Version() and GetVersionInfo() methods for frontend access
-- golangci-lint configuration for Go
-- ESLint + Prettier configuration for frontend
-- Pre-commit hooks with husky + lint-staged
 - Database migration system with versioned SQL files
-- `make version` command to show build info
-- Unit tests for config, logger, errors, and version (13 tests total)
-
-### Changed
 - Config file location changed to executable directory (portable deployment)
-- Replaced `log.Println`/`log.Printf` with structured `slog.Info`/`slog.Error`
-- Logger integrates with config system (level, file path from `config.yaml`)
-- Boot stages now log with structured fields (stage name, error)
-- Makefile `build` target now uses `wails build` with ldflags
 
 ### Removed
-- Removed `time.Sleep` from boot stages (config, security, services, finalize)
 - Removed `%APPDATA%` dependency for config location
+- Removed root-level logo files (cleaned up)
 
 ---
 

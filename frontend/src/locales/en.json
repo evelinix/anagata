@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "AnagataSentinel",
+    "subtitle": "Security Monitoring System"
+  },
+  "greet": {
+    "placeholder": "Enter your name...",
+    "button": "Greet",
+    "result": "Hello {name}, It's show time!"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "about": "About"
+  }
+}

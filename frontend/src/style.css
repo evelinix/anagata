@@ -17,6 +17,14 @@
 
 @layer base {
   html {
+    background-color: rgb(248, 250, 252);
+    color: #1a1a1a;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  html.dark {
     background-color: rgba(27, 38, 54, 1);
     color: white;
   }

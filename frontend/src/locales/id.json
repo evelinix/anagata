@@ -1,0 +1,21 @@
+{
+  "app": {
+    "title": "AnagataSentinel",
+    "subtitle": "Sistem Monitoring Keamanan"
+  },
+  "greet": {
+    "placeholder": "Masukkan nama Anda...",
+    "button": "Sapa",
+    "result": "Halo {name}, Saatnya pertunjukan!"
+  },
+  "theme": {
+    "toggle": "Ubah tema",
+    "light": "Mode terang",
+    "dark": "Mode gelap"
+  },
+  "nav": {
+    "home": "Beranda",
+    "settings": "Pengaturan",
+    "about": "Tentang"
+  }
+}

@@ -11,6 +11,14 @@ export default ts.config(
   {
     files: ['src/**/*.{ts,svelte}'],
     languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        navigator: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
+      },
       parserOptions: {
         parser: ts.parser,
       },

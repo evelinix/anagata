@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log/slog"
 	"sync"
+	"time"
 
 	"AnagataSentinel/internal/config"
 	"AnagataSentinel/internal/database"
 	apperrors "AnagataSentinel/internal/errors"
 	"AnagataSentinel/internal/logger"
 	"AnagataSentinel/internal/splash"
+	"AnagataSentinel/internal/updater"
 	"AnagataSentinel/internal/version"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -20,9 +22,10 @@ type App struct {
 	ctx    context.Context
 	config *config.Config
 
-	splash *splash.NativeSplash
+	splash  *splash.NativeSplash
+	checker *updater.Checker
 
-	startupError  *apperrors.AppError
+	startupError *apperrors.AppError
 	backendReady chan struct{}
 	domReady     chan struct{}
 	initOnce     sync.Once
@@ -106,6 +109,12 @@ func (a *App) bootSecurity() error {
 }
 
 func (a *App) bootServices() error {
+	if a.config != nil {
+		a.checker = updater.NewChecker("AnagataSentinel", "AnagataSentinel")
+		a.checker.StartPeriodicCheck(1*time.Hour, func(release *updater.Release) {
+			slog.Info("update available", "version", release.TagName)
+		})
+	}
 	return nil
 }
 
@@ -174,4 +183,33 @@ func (a *App) GetVersionInfo() map[string]string {
 		"buildTime": version.BuildTime,
 		"goVersion": version.GoVersion,
 	}
+}
+
+func (a *App) CheckForUpdate() (map[string]interface{}, error) {
+	if a.checker == nil {
+		return map[string]interface{}{
+			"available": false,
+			"message":   "updater not initialized",
+		}, nil
+	}
+
+	available, release, err := a.checker.IsUpdateAvailable()
+	if err != nil {
+		return nil, err
+	}
+
+	if !available {
+		return map[string]interface{}{
+			"available": false,
+			"message":   "no update available",
+		}, nil
+	}
+
+	return map[string]interface{}{
+		"available":   true,
+		"version":     release.TagName,
+		"name":        release.Name,
+		"url":         release.HTMLURL,
+		"description": release.Body,
+	}, nil
 }

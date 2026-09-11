@@ -20,16 +20,19 @@ Wails v2 desktop app — Go backend + Svelte 5 frontend embedded in a native Web
 | `make version` | Show current version info |
 | `cd frontend && pnpm lint` | ESLint frontend |
 | `cd frontend && pnpm format` | Prettier format frontend |
+| `go test ./internal/...` | Run all Go tests |
+| `cd frontend && pnpm test` | Run Vitest frontend tests |
 
 ## Architecture
 
 - **Go entry**: `main.go` → `wails.Run()` → creates window, binds `App` struct methods
-- **Config**: `internal/config/config.go` → YAML config at `%APPDATA%/AnagataSentinel/config.yaml`
+- **Config**: `internal/config/config.go` → YAML config at exe directory (portable)
 - **Logger**: `internal/logger/logger.go` → structured slog (JSON file + text console)
-- **Go app logic**: `internal/app/app.go` → `App` struct with lifecycle hooks + exported methods (e.g. `Greet`)
+- **Go app logic**: `internal/app/app.go` → `App` struct with lifecycle hooks + exported methods
 - **Go database**: `internal/database/database.go` → encrypted SQLite via `gosqlite.org/vfs/crypto`
 - **Error handling**: `internal/errors/` → AppError type + Walk dialog for boot failures
 - **Splash screen**: `internal/splash/splash.go` (interface) + `splash_windows.go` (Win32 native) + `splash_other.go` (no-op)
+- **Auto-updater**: `internal/updater/updater.go` → GitHub release check
 - **Frontend entry**: `frontend/index.html` → `frontend/src/main.ts` → mounts `App.svelte`
 - **Wails bindings**: `frontend/wailsjs/go/app/App.js` — **auto-generated**, never edit manually
 - **Frontend assets**: embedded from `frontend/dist/` into Go binary at compile time
@@ -37,13 +40,19 @@ Wails v2 desktop app — Go backend + Svelte 5 frontend embedded in a native Web
 
 ## Config
 
-Config file: `config.yaml` (sama directory dengan executable)
+Config file: `config.yaml` (same directory as executable)
 
 | Env Variable | Config Path | Default |
 |---|---|---|
 | `ANAGATA_DEBUG` | `app.debug` | `false` |
 | `ANAGATA_DB_PASSWORD` | `database.password` | `0123456789` |
 | `ANAGATA_LOG_LEVEL` | `logging.level` | `info` |
+
+## Frontend Features
+
+- **Dark/Light Mode**: Toggle in header, persists to localStorage, system preference detection
+- **i18n**: EN + ID locales via svelte-i18n, language toggle button
+- **Testing**: Vitest + @testing-library/svelte
 
 ## Conventions
 
@@ -62,4 +71,4 @@ Config file: `config.yaml` (sama directory dengan executable)
 - `build/bin/AnagataSentinel.exe` also shouldn't be tracked
 - `wails.json` `frontend:dev:serverUrl: "auto"` — Wails auto-detects the Vite dev server URL
 - Window background in `main.go` and `style.css` should match to avoid flash-of-white on startup
-- Go tests exist for config and logger: `go test ./internal/config/ ./internal/logger/`
+- Go tests exist for all internal packages: `go test ./internal/...`
