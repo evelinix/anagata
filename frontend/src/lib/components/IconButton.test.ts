@@ -36,14 +36,4 @@ describe('IconButton', () => {
     await btn.click();
     expect(onClick).not.toHaveBeenCalled();
   });
-
-  it('adds labeled class when label is provided', () => {
-    render(IconButton, { props: { label: 'Save' } });
-    expect(screen.getByRole('button').className).toContain('winui-icon-btn--labeled');
-  });
-
-  it('does not add labeled class when label is empty', () => {
-    render(IconButton);
-    expect(screen.getByRole('button').className).not.toContain('winui-icon-btn--labeled');
-  });
 });

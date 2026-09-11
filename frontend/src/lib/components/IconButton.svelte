@@ -23,7 +23,6 @@
 
 <button
   class="winui-icon-btn winui-icon-btn--{variant} winui-icon-btn--{size}"
-  class:winui-icon-btn--labeled={!!label}
   {disabled}
   aria-label={label}
   onclick={(e: MouseEvent) => {
@@ -32,9 +31,6 @@
 >
   {#if children}
     <span class="winui-icon-btn-icon">{@render children()}</span>
-  {/if}
-  {#if label}
-    <span class="winui-icon-btn-label">{label}</span>
   {/if}
 </button>
 
@@ -76,19 +72,10 @@
     flex-shrink: 0;
   }
 
-  .winui-icon-btn-label {
-    font-size: var(--text-body);
-    line-height: var(--text-body-lh);
-  }
-
   /* ---- Sizes ---- */
   .winui-icon-btn--sm {
     height: 28px;
     padding: 5px;
-  }
-
-  .winui-icon-btn--sm.winui-icon-btn--labeled {
-    padding: 5px 10px;
   }
 
   .winui-icon-btn--md {
@@ -96,17 +83,9 @@
     padding: 6px;
   }
 
-  .winui-icon-btn--md.winui-icon-btn--labeled {
-    padding: 6px 14px;
-  }
-
   .winui-icon-btn--lg {
     height: 40px;
     padding: 9px;
-  }
-
-  .winui-icon-btn--lg.winui-icon-btn--labeled {
-    padding: 9px 18px;
   }
 
   /* ---- Subtle (default WinUI style) ---- */
