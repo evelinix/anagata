@@ -3,7 +3,7 @@
   import { Greet, GetVersionInfo } from '../wailsjs/go/app/App';
   import { getTheme, toggleTheme, initTheme } from './lib/stores/theme';
   import { t, getLocale, setLocale } from './lib/i18n/index';
-  import { Button, Card, IconButton } from './lib/components';
+  import { Button, Card, IconButton, Typography } from './lib/components';
   import {
     IconWorld,
     IconSun,
@@ -78,11 +78,7 @@
   >
     <div class="flex items-center gap-3">
       <img src={logo} class="w-6 h-6" alt="" />
-      <span
-        class="font-semibold"
-        style="font-size: var(--text-body); line-height: var(--text-body-lh); color: var(--text-primary);"
-        >{tl('app.title')}</span
-      >
+      <Typography variant="body-strong">{tl('app.title')}</Typography>
     </div>
     <div class="flex items-center gap-1">
       <IconButton variant="subtle" size="sm" label="Toggle language" onclick={toggleLocale}>
@@ -103,23 +99,23 @@
     <!-- Hero -->
     <div class="flex flex-col items-center mb-8">
       <img src={logo} class="w-16 h-16 mb-4" alt="" style="filter: drop-shadow(var(--shadow-4));" />
-      <h1
-        style="font-size: var(--text-title); line-height: var(--text-title-lh); font-weight: var(--weight-bold); color: var(--text-primary);"
-        class="mb-1"
-      >
+      <Typography variant="title" as="h1" weight="bold" class="mb-1">
         {tl('app.title')}
-      </h1>
-      <p
-        style="font-size: var(--text-body); line-height: var(--text-body-lh); font-weight: var(--weight-semibold); color: var(--accent-default); letter-spacing: 0.08em; text-transform: uppercase;"
+      </Typography>
+      <Typography
+        variant="body"
+        weight="semibold"
+        color="accent"
+        align="center"
+        uppercase
         class="mb-2"
+        style="letter-spacing: 0.08em;"
       >
         {tl('app.subtitle')}
-      </p>
-      <p
-        style="font-size: var(--text-body); line-height: var(--text-body-lh); color: var(--text-secondary); max-width: 28rem; text-align: center;"
-      >
+      </Typography>
+      <Typography variant="body" color="secondary" align="center" style="max-width: 28rem;">
         {tl('app.description')}
-      </p>
+      </Typography>
     </div>
 
     <!-- Status Cards -->
@@ -129,14 +125,9 @@
           <div
             style="width: 8px; height: 8px; border-radius: var(--radius-full); background-color: var(--status-success);"
           ></div>
-          <span
-            style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em;"
-            >{tl('status.system')}</span
+          <Typography variant="caption" color="tertiary" uppercase>{tl('status.system')}</Typography
           >
-          <span
-            style="font-size: var(--text-body); line-height: var(--text-body-lh); font-weight: var(--weight-semibold); color: var(--status-success-text);"
-            >{tl('status.online')}</span
-          >
+          <Typography variant="body-strong" color="success">{tl('status.online')}</Typography>
         </div>
       </Card>
       <Card variant="default" padding>
@@ -144,14 +135,10 @@
           <div
             style="width: 8px; height: 8px; border-radius: var(--radius-full); background-color: var(--status-success);"
           ></div>
-          <span
-            style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em;"
-            >{tl('status.threats')}</span
+          <Typography variant="caption" color="tertiary" uppercase
+            >{tl('status.threats')}</Typography
           >
-          <span
-            style="font-size: var(--text-body); line-height: var(--text-body-lh); font-weight: var(--weight-semibold); color: var(--status-success-text);"
-            >{tl('status.noThreats')}</span
-          >
+          <Typography variant="body-strong" color="success">{tl('status.noThreats')}</Typography>
         </div>
       </Card>
       <Card variant="default" padding>
@@ -159,14 +146,10 @@
           <div
             style="width: 8px; height: 8px; border-radius: var(--radius-full); background-color: var(--status-info);"
           ></div>
-          <span
-            style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em;"
-            >{tl('status.monitors')}</span
+          <Typography variant="caption" color="tertiary" uppercase
+            >{tl('status.monitors')}</Typography
           >
-          <span
-            style="font-size: var(--text-body); line-height: var(--text-body-lh); font-weight: var(--weight-semibold); color: var(--status-info-text);"
-            >12</span
-          >
+          <Typography variant="body-strong" color="info">12</Typography>
         </div>
       </Card>
       <Card variant="default" padding>
@@ -174,14 +157,10 @@
           <div
             style="width: 8px; height: 8px; border-radius: var(--radius-full); background-color: var(--status-neutral);"
           ></div>
-          <span
-            style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em;"
-            >{tl('status.lastScan')}</span
+          <Typography variant="caption" color="tertiary" uppercase
+            >{tl('status.lastScan')}</Typography
           >
-          <span
-            style="font-size: var(--text-body); line-height: var(--text-body-lh); font-weight: var(--weight-semibold); color: var(--text-secondary);"
-            >{tl('status.never')}</span
-          >
+          <Typography variant="body-strong" color="secondary">{tl('status.never')}</Typography>
         </div>
       </Card>
     </div>
@@ -206,56 +185,53 @@
     {#if resultText}
       <div
         class="mb-8 flex items-center gap-3"
-        style="padding: 12px 16px; border-radius: var(--radius-md); background-color: var(--status-info-bg); border: 1px solid var(--status-info); font-size: var(--text-body); line-height: var(--text-body-lh); color: var(--status-info-text); box-shadow: var(--shadow-2);"
+        style="padding: 12px 16px; border-radius: var(--radius-md); background-color: var(--status-info-bg); border: 1px solid var(--status-info); box-shadow: var(--shadow-2);"
       >
         <IconInfoCircle size={16} stroke={2} style="flex-shrink: 0; color: var(--status-info);" />
-        {resultText}
+        <Typography variant="body">{resultText}</Typography>
       </div>
     {/if}
 
     <!-- Features Grid -->
     <div class="w-full" style="max-width: 42rem;">
-      <h2
-        style="font-size: var(--text-caption); line-height: var(--text-caption-lh); font-weight: var(--weight-semibold); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em;"
-        class="text-center mb-4"
+      <Typography
+        variant="caption-strong"
+        color="tertiary"
+        uppercase
+        align="center"
+        class="mb-4"
+        style="letter-spacing: 0.08em;"
       >
         {tl('features.title')}
-      </h2>
+      </Typography>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card variant="default" padding>
           <div class="flex flex-col items-center gap-2">
             <IconChartBar size={20} stroke={2} style="color: var(--accent-default);" />
-            <span
-              style="font-size: var(--text-caption); line-height: var(--text-caption-lh); font-weight: var(--weight-semibold); color: var(--text-primary); text-align: center;"
-              >{tl('features.monitoring')}</span
+            <Typography variant="caption-strong" align="center"
+              >{tl('features.monitoring')}</Typography
             >
           </div>
         </Card>
         <Card variant="default" padding>
           <div class="flex flex-col items-center gap-2">
             <IconAlertTriangle size={20} stroke={2} style="color: var(--status-critical);" />
-            <span
-              style="font-size: var(--text-caption); line-height: var(--text-caption-lh); font-weight: var(--weight-semibold); color: var(--text-primary); text-align: center;"
-              >{tl('features.threats')}</span
+            <Typography variant="caption-strong" align="center">{tl('features.threats')}</Typography
             >
           </div>
         </Card>
         <Card variant="default" padding>
           <div class="flex flex-col items-center gap-2">
             <IconFileText size={20} stroke={2} style="color: var(--accent-default);" />
-            <span
-              style="font-size: var(--text-caption); line-height: var(--text-caption-lh); font-weight: var(--weight-semibold); color: var(--text-primary); text-align: center;"
-              >{tl('features.analytics')}</span
+            <Typography variant="caption-strong" align="center"
+              >{tl('features.analytics')}</Typography
             >
           </div>
         </Card>
         <Card variant="default" padding>
           <div class="flex flex-col items-center gap-2">
             <IconBell size={20} stroke={2} style="color: var(--status-attention);" />
-            <span
-              style="font-size: var(--text-caption); line-height: var(--text-caption-lh); font-weight: var(--weight-semibold); color: var(--text-primary); text-align: center;"
-              >{tl('features.alerts')}</span
-            >
+            <Typography variant="caption-strong" align="center">{tl('features.alerts')}</Typography>
           </div>
         </Card>
       </div>
@@ -267,16 +243,12 @@
     class="flex items-center justify-between px-5 py-2"
     style="border-top: 1px solid var(--stroke-subtle); background-color: var(--bg-layer-alt);"
   >
-    <span
-      style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary);"
-    >
+    <Typography variant="caption" color="tertiary">
       v{versionInfo.version || '0.1.0'}
-    </span>
-    <span
-      style="font-size: var(--text-caption); line-height: var(--text-caption-lh); color: var(--text-tertiary);"
-    >
+    </Typography>
+    <Typography variant="caption" color="tertiary">
       &copy; {new Date().getFullYear()}
       {tl('footer.copyright')}
-    </span>
+    </Typography>
   </footer>
 </div>

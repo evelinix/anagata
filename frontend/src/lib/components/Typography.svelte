@@ -21,6 +21,7 @@
     | 'tertiary'
     | 'disabled'
     | 'accent'
+    | 'info'
     | 'success'
     | 'critical'
     | 'attention';
@@ -35,6 +36,8 @@
     weight,
     uppercase = false,
     text = '',
+    class: className = '',
+    style = '',
     children,
   }: {
     variant?: Variant;
@@ -44,6 +47,8 @@
     weight?: 'regular' | 'semibold' | 'bold';
     uppercase?: boolean;
     text?: string;
+    class?: string;
+    style?: string;
     children?: Snippet;
   } = $props();
 
@@ -83,6 +88,7 @@
     tertiary: 'var(--text-tertiary)',
     disabled: 'var(--text-disabled)',
     accent: 'var(--accent-default)',
+    info: 'var(--status-info-text)',
     success: 'var(--status-success-text)',
     critical: 'var(--status-critical-text)',
     attention: 'var(--status-attention-text)',
@@ -103,6 +109,7 @@
 
 <svelte:element
   this={as}
+  class={className}
   style="
     font-size: {sizeMap[variant]};
     line-height: {lhMap[variant]};
@@ -110,6 +117,7 @@
     color: {colorMap[color]};
     {align ? `text-align: ${align};` : ''}
     {uppercase ? 'text-transform: uppercase; letter-spacing: 0.04em;' : ''}
+    {style}
   "
 >
   {#if children}
