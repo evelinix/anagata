@@ -89,10 +89,11 @@
 ## Phase 4: Features (Future)
 
 ### 4.1 Dashboard
-- [ ] Real-time monitoring widgets
-- [ ] Chart/graph (Chart.js atau D3)
-- [ ] Alert notification system
-- [ ] Status overview cards
+- [x] Real-time monitoring widgets (StatusCard component)
+- [x] Chart/graph (Canvas-based TrafficChart, no external dependencies)
+- [x] Alert notification system (AlertList component)
+- [x] Status overview cards
+- [x] Sidebar navigation with tab switching
 
 ### 4.2 Plugin System
 - [ ] Plugin interface definition

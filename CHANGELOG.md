@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Dashboard** (Phase 4.1)
+  - Sidebar navigation with Dashboard, Scan, Alerts, Settings tabs
+  - StatusCard component for real-time monitoring widgets (CPU, Memory, Network, Disk)
+  - TrafficChart component: Canvas-based area chart with gradient fill, grid lines, axis labels, responsive resize
+  - AlertList component with typed alerts (info, warning, critical) and icon indicators
+  - Mock data store (`stores/dashboard.ts`) generating 24-hour traffic data
+  - i18n: Added `nav.dashboard`, `nav.scan`, `nav.alerts`, `nav.settings` to EN + ID locales
+  - 16 new tests (StatusCard: 7, AlertList: 5, TrafficChart: 3, dashboard store: 6)
+
 - **Log rotation** (`internal/logger/rotator.go`)
   - Size-based rotation (configurable via `max_size_mb`)
   - Active log: `logs/app.log`

@@ -33,6 +33,12 @@
     "alerts": "Instant Alerts",
     "alertsDesc": "Immediate notification of security events"
   },
+  "nav": {
+    "dashboard": "Dashboard",
+    "scan": "Scan",
+    "alerts": "Alerts",
+    "settings": "Settings"
+  },
   "theme": {
     "toggle": "Toggle theme",
     "light": "Light mode",

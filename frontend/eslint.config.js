@@ -19,6 +19,10 @@ export default ts.config(
         Event: 'readonly',
         CustomEvent: 'readonly',
         MouseEvent: 'readonly',
+        HTMLCanvasElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        ResizeObserver: 'readonly',
+        getComputedStyle: 'readonly',
       },
       parserOptions: {
         parser: ts.parser,

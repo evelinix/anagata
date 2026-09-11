@@ -33,6 +33,12 @@
     "alerts": "Alert Instan",
     "alertsDesc": "Notifikasi segera dari peristiwa keamanan"
   },
+  "nav": {
+    "dashboard": "Dasbor",
+    "scan": "Pindai",
+    "alerts": "Peringatan",
+    "settings": "Pengaturan"
+  },
   "theme": {
     "toggle": "Ubah tema",
     "light": "Mode terang",

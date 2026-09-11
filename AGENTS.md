@@ -21,7 +21,7 @@ Wails v2 desktop app — Go backend + Svelte 5 frontend embedded in a native Web
 | `cd frontend && pnpm lint` | ESLint frontend |
 | `cd frontend && pnpm format` | Prettier format frontend |
 | `go test ./internal/...` | Run all Go tests |
-| `cd frontend && pnpm test` | Run Vitest frontend tests |
+| `cd frontend && pnpm test` | Run Vitest frontend tests (102 tests) |
 
 ## Architecture
 
@@ -51,8 +51,11 @@ Config file: `config.yaml` (same directory as executable)
 ## Frontend Features
 
 - **Dark/Light Mode**: Toggle in header, persists to localStorage, system preference detection
-- **i18n**: EN + ID locales via svelte-i18n, language toggle button
+- **i18n**: Custom i18n + CustomEvent dispatch (EN + ID locales)
 - **Testing**: Vitest + @testing-library/svelte
+- **Dashboard**: Sidebar navigation, StatusCard, TrafficChart (Canvas), AlertList
+- **ANTS Components**: Button, Input, Card, IconButton, Typography, StatusCard, AlertList, TrafficChart
+- **Custom Icons**: 11 SVG icons in `frontend/src/lib/components/icons/`
 
 ## Conventions
 
