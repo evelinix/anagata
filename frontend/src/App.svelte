@@ -4,6 +4,7 @@
   import { getTheme, toggleTheme, initTheme } from './lib/stores/theme';
   import { t, getLocale, setLocale } from './lib/i18n/index';
   import { Button, Card, IconButton } from './lib/components';
+  import { IconWorld, IconSun, IconMoon } from '@tabler/icons-svelte';
 
   let resultText = $state('');
   let name = $state('');
@@ -73,34 +74,13 @@
     </div>
     <div class="flex items-center gap-1">
       <IconButton variant="subtle" size="sm" label="Toggle language" onclick={toggleLocale}>
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-          />
-        </svg>
+        <IconWorld size={16} stroke={2} />
       </IconButton>
       <IconButton variant="subtle" size="sm" label={tl('theme.toggle')} onclick={handleToggleTheme}>
         {#if currentTheme === 'dark'}
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
+          <IconSun size={16} stroke={2} />
         {:else}
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            />
-          </svg>
+          <IconMoon size={16} stroke={2} />
         {/if}
       </IconButton>
     </div>
