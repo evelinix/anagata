@@ -88,7 +88,7 @@
     padding: 9px;
   }
 
-  /* ---- Subtle (default WinUI style) ---- */
+  /* ---- Subtle (default ANTS style) ---- */
   .ants-icon-btn--subtle {
     background-color: transparent;
   }

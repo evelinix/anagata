@@ -12,12 +12,13 @@
 }
 
 /* ============================================================
-   WinUI 3 Design Tokens
+   ANTS Design System
+   Based on Microsoft ANTS / Fluent Design
    https://learn.microsoft.com/en-us/windows/apps/design/
    ============================================================ */
 
 :root {
-  /* ---- WinUI 3 Accent Colors ---- */
+  /* ---- ANTS Accent Colors ---- */
   --accent-default: rgb(0, 95, 184);
   --accent-dark: rgb(0, 78, 140);
   --accent-light: rgb(0, 120, 212);
@@ -27,7 +28,7 @@
   --accent-foreground: rgb(255, 255, 255);
   --accent-subtle: rgba(0, 120, 212, 0.08);
 
-  /* ---- WinUI 3 Text Colors ---- */
+  /* ---- ANTS Text Colors ---- */
   --text-primary: rgb(24, 24, 24);
   --text-secondary: rgb(96, 96, 96);
   --text-tertiary: rgb(133, 133, 133);
@@ -35,7 +36,7 @@
   --text-on-accent: rgb(255, 255, 255);
   --text-on-accent-tertiary: rgba(255, 255, 255, 0.7);
 
-  /* ---- WinUI 3 Background / Surface ---- */
+  /* ---- ANTS Background / Surface ---- */
   --bg-solid: rgb(249, 249, 249);
   --bg-solid-alt: rgb(255, 255, 255);
   --bg-layer-alt: rgb(255, 255, 255);
@@ -47,14 +48,14 @@
   --bg-acrylic: rgba(255, 255, 255, 0.76);
   --bg-smoke: rgba(0, 0, 0, 0.3);
 
-  /* ---- WinUI 3 Stroke / Border ---- */
+  /* ---- ANTS Stroke / Border ---- */
   --stroke-card: rgba(0, 0, 0, 0.0578);
   --stroke-default: rgba(0, 0, 0, 0.0803);
   --stroke-subtle: rgba(0, 0, 0, 0.0373);
   --stroke-disabled: rgba(0, 0, 0, 0.0373);
   --stroke-strong: rgba(0, 0, 0, 0.16);
 
-  /* ---- WinUI 3 Status Colors ---- */
+  /* ---- ANTS Status Colors ---- */
   --status-success: rgb(108, 201, 114);
   --status-success-text: rgb(15, 81, 20);
   --status-success-bg: rgba(108, 201, 114, 0.08);
@@ -74,7 +75,7 @@
   --status-neutral-text: rgb(37, 37, 37);
   --status-neutral-bg: rgba(104, 104, 104, 0.08);
 
-  /* ---- WinUI 3 Typography Scale ---- */
+  /* ---- ANTS Typography Scale ---- */
   --font-family: 'Oxanium', 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   --text-caption: 12px; /* 9pt   — line-height: 16px */
@@ -109,12 +110,12 @@
   --text-display: 68px; /* 51pt  — line-height: 92px */
   --text-display-lh: 92px;
 
-  /* ---- WinUI 3 Font Weight ---- */
+  /* ---- ANTS Font Weight ---- */
   --weight-regular: 400;
   --weight-semibold: 600;
   --weight-bold: 700;
 
-  /* ---- WinUI 3 Border Radius ---- */
+  /* ---- ANTS Border Radius ---- */
   --radius-none: 0px;
   --radius-sm: 2px;
   --radius-md: 4px;
@@ -122,7 +123,7 @@
   --radius-xl: 12px;
   --radius-full: 9999px;
 
-  /* ---- WinUI 3 Spacing ---- */
+  /* ---- ANTS Spacing ---- */
   --space-xxs: 2px;
   --space-xs: 4px;
   --space-s: 8px;
@@ -132,7 +133,7 @@
   --space-xxl: 32px;
   --space-xxxl: 48px;
 
-  /* ---- WinUI 3 Elevation (Shadow) ---- */
+  /* ---- ANTS Elevation (Shadow) ---- */
   --shadow-0: none;
   --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.04), 0 0 2px rgba(0, 0, 0, 0.06);
   --shadow-4: 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 16px rgba(0, 0, 0, 0.08);
@@ -140,7 +141,7 @@
   --shadow-16: 0 8px 32px rgba(0, 0, 0, 0.14);
   --shadow-64: 0 8px 32px rgba(0, 0, 0, 0.24);
 
-  /* ---- WinUI 3 Animation ---- */
+  /* ---- ANTS Animation ---- */
   --duration-short: 167ms;
   --duration-medium: 333ms;
   --duration-long: 500ms;
@@ -154,7 +155,7 @@
 }
 
 .dark {
-  /* ---- WinUI 3 Accent Colors (Dark) ---- */
+  /* ---- ANTS Accent Colors (Dark) ---- */
   --accent-default: rgb(96, 205, 255);
   --accent-dark: rgb(0, 120, 212);
   --accent-light: rgb(151, 235, 255);
@@ -164,7 +165,7 @@
   --accent-foreground: rgb(49, 49, 49);
   --accent-subtle: rgba(96, 205, 255, 0.08);
 
-  /* ---- WinUI 3 Text Colors (Dark) ---- */
+  /* ---- ANTS Text Colors (Dark) ---- */
   --text-primary: rgb(255, 255, 255);
   --text-secondary: rgb(204, 204, 204);
   --text-tertiary: rgb(153, 153, 153);
@@ -172,7 +173,7 @@
   --text-on-accent: rgb(49, 49, 49);
   --text-on-accent-tertiary: rgba(49, 49, 49, 0.7);
 
-  /* ---- WinUI 3 Background / Surface (Dark) ---- */
+  /* ---- ANTS Background / Surface (Dark) ---- */
   --bg-solid: rgb(32, 32, 32);
   --bg-solid-alt: rgb(44, 44, 44);
   --bg-layer-alt: rgb(39, 39, 39);
@@ -184,14 +185,14 @@
   --bg-acrylic: rgba(44, 44, 44, 0.8);
   --bg-smoke: rgba(0, 0, 0, 0.5);
 
-  /* ---- WinUI 3 Stroke / Border (Dark) ---- */
+  /* ---- ANTS Stroke / Border (Dark) ---- */
   --stroke-card: rgba(255, 255, 255, 0.0698);
   --stroke-default: rgba(255, 255, 255, 0.0837);
   --stroke-subtle: rgba(255, 255, 255, 0.0373);
   --stroke-disabled: rgba(255, 255, 255, 0.0398);
   --stroke-strong: rgba(255, 255, 255, 0.54);
 
-  /* ---- WinUI 3 Status Colors (Dark) ---- */
+  /* ---- ANTS Status Colors (Dark) ---- */
   --status-success: rgb(108, 201, 114);
   --status-success-text: rgb(154, 235, 160);
   --status-success-bg: rgba(108, 201, 114, 0.12);
@@ -211,7 +212,7 @@
   --status-neutral-text: rgb(204, 204, 204);
   --status-neutral-bg: rgba(153, 153, 153, 0.12);
 
-  /* ---- WinUI 3 Elevation (Dark) ---- */
+  /* ---- ANTS Elevation (Dark) ---- */
   --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 2px rgba(0, 0, 0, 0.12);
   --shadow-4: 0 2px 4px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.14);
   --shadow-8: 0 8px 16px rgba(0, 0, 0, 0.26);
