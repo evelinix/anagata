@@ -73,7 +73,7 @@
 
 ### 3.3 Testing
 - [x] Go unit tests (`*_test.go`) — 21 tests across all packages
-- [ ] Go integration tests
+- [x] Go integration tests
 - [x] Frontend unit tests (Vitest)
 - [x] Frontend component tests (Testing Library)
 - [ ] E2E tests (Playwright)
