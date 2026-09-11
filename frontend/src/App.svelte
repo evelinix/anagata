@@ -16,7 +16,7 @@
     IconAlertTriangle,
     IconFileText,
     IconBell,
-  } from '@tabler/icons-svelte';
+  } from './lib/components/icons';
 
   let resultText = $state('');
   let name = $state('');
