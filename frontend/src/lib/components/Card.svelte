@@ -18,69 +18,69 @@
   } = $props();
 </script>
 
-<div class="winui-card winui-card--{variant}">
+<div class="ants-card ants-card--{variant}">
   {#if header}
-    <div class="winui-card-header">
+    <div class="ants-card-header">
       {@render header()}
     </div>
   {/if}
-  <div class="winui-card-body" class:winui-card-body--padded={padding}>
+  <div class="ants-card-body" class:ants-card-body--padded={padding}>
     {#if children}
       {@render children()}
     {/if}
   </div>
   {#if footer}
-    <div class="winui-card-footer">
+    <div class="ants-card-footer">
       {@render footer()}
     </div>
   {/if}
 </div>
 
 <style>
-  .winui-card {
+  .ants-card {
     border-radius: var(--radius-lg);
     transition:
       box-shadow var(--duration-medium) var(--easing-default),
       background-color var(--duration-medium) var(--easing-default);
   }
 
-  .winui-card-header {
+  .ants-card-header {
     padding: 16px 16px 0;
   }
 
-  .winui-card-body {
+  .ants-card-body {
     width: 100%;
   }
 
-  .winui-card-body--padded {
+  .ants-card-body--padded {
     padding: 16px;
   }
 
-  .winui-card-footer {
+  .ants-card-footer {
     padding: 0 16px 16px;
   }
 
   /* ---- Default (card with border + subtle shadow) ---- */
-  .winui-card--default {
+  .ants-card--default {
     background-color: var(--bg-layer-alt);
     border: 1px solid var(--stroke-card);
     box-shadow: var(--shadow-2);
   }
 
   /* ---- Filled (solid background, no border) ---- */
-  .winui-card--filled {
+  .ants-card--filled {
     background-color: var(--bg-layer);
     box-shadow: var(--shadow-2);
   }
 
   /* ---- Outlined (border only, transparent bg) ---- */
-  .winui-card--outlined {
+  .ants-card--outlined {
     background-color: transparent;
     border: 1px solid var(--stroke-default);
   }
 
   /* ---- Acrylic (translucent background) ---- */
-  .winui-card--acrylic {
+  .ants-card--acrylic {
     background-color: var(--bg-acrylic);
     border: 1px solid var(--stroke-subtle);
     box-shadow: var(--shadow-4);

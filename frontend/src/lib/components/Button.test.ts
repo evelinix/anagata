@@ -12,13 +12,13 @@ describe('Button', () => {
     'applies %s variant class',
     (variant) => {
       render(Button, { props: { variant } });
-      expect(screen.getByRole('button').className).toContain(`winui-btn--${variant}`);
+      expect(screen.getByRole('button').className).toContain(`ants-btn--${variant}`);
     },
   );
 
   it.each(['sm', 'md', 'lg'] as const)('applies %s size class', (size) => {
     render(Button, { props: { size } });
-    expect(screen.getByRole('button').className).toContain(`winui-btn--${size}`);
+    expect(screen.getByRole('button').className).toContain(`ants-btn--${size}`);
   });
 
   it('calls onclick when clicked', async () => {

@@ -51,14 +51,14 @@ describe('Input', () => {
   it.each(['sm', 'md', 'lg'] as const)('applies %s size class', (size) => {
     const { container } = render(Input, { props: { size } });
     const input = container.querySelector('input');
-    expect(input?.className).toContain(`winui-input--${size}`);
+    expect(input?.className).toContain(`ants-input--${size}`);
   });
 
   it('shows error message', () => {
     render(Input, { props: { error: 'Field is required' } });
     expect(screen.getByText('Field is required')).toBeInTheDocument();
     const input = screen.getByRole('textbox');
-    expect(input.className).toContain('winui-input--error');
+    expect(input.className).toContain('ants-input--error');
   });
 
   it('applies disabled state', () => {

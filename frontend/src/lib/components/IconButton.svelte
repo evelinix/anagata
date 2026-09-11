@@ -22,7 +22,7 @@
 </script>
 
 <button
-  class="winui-icon-btn winui-icon-btn--{variant} winui-icon-btn--{size}"
+  class="ants-icon-btn ants-icon-btn--{variant} ants-icon-btn--{size}"
   {disabled}
   aria-label={label}
   onclick={(e: MouseEvent) => {
@@ -30,12 +30,12 @@
   }}
 >
   {#if children}
-    <span class="winui-icon-btn-icon">{@render children()}</span>
+    <span class="ants-icon-btn-icon">{@render children()}</span>
   {/if}
 </button>
 
 <style>
-  .winui-icon-btn {
+  .ants-icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -54,18 +54,18 @@
     color: var(--text-primary);
   }
 
-  .winui-icon-btn:focus-visible {
+  .ants-icon-btn:focus-visible {
     outline: 2px solid var(--accent-default);
     outline-offset: 2px;
   }
 
-  .winui-icon-btn:disabled {
+  .ants-icon-btn:disabled {
     opacity: 0.38;
     cursor: not-allowed;
     pointer-events: none;
   }
 
-  .winui-icon-btn-icon {
+  .ants-icon-btn-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -73,75 +73,75 @@
   }
 
   /* ---- Sizes ---- */
-  .winui-icon-btn--sm {
+  .ants-icon-btn--sm {
     height: 28px;
     padding: 5px;
   }
 
-  .winui-icon-btn--md {
+  .ants-icon-btn--md {
     height: 32px;
     padding: 6px;
   }
 
-  .winui-icon-btn--lg {
+  .ants-icon-btn--lg {
     height: 40px;
     padding: 9px;
   }
 
   /* ---- Subtle (default WinUI style) ---- */
-  .winui-icon-btn--subtle {
+  .ants-icon-btn--subtle {
     background-color: transparent;
   }
 
-  .winui-icon-btn--subtle:hover {
+  .ants-icon-btn--subtle:hover {
     background-color: var(--stroke-subtle);
   }
 
-  .winui-icon-btn--subtle:active {
+  .ants-icon-btn--subtle:active {
     background-color: var(--stroke-subtle);
   }
 
   /* ---- Outline ---- */
-  .winui-icon-btn--outline {
+  .ants-icon-btn--outline {
     background-color: transparent;
     border: 1px solid var(--stroke-default);
   }
 
-  .winui-icon-btn--outline:hover {
+  .ants-icon-btn--outline:hover {
     background-color: var(--stroke-subtle);
     border-color: var(--stroke-strong);
   }
 
-  .winui-icon-btn--outline:active {
+  .ants-icon-btn--outline:active {
     background-color: var(--stroke-subtle);
   }
 
   /* ---- Transparent ---- */
-  .winui-icon-btn--transparent {
+  .ants-icon-btn--transparent {
     background-color: transparent;
   }
 
-  .winui-icon-btn--transparent:hover {
+  .ants-icon-btn--transparent:hover {
     background-color: var(--stroke-subtle);
   }
 
-  .winui-icon-btn--transparent:active {
+  .ants-icon-btn--transparent:active {
     background-color: var(--stroke-subtle);
   }
 
   /* ---- Primary ---- */
-  .winui-icon-btn--primary {
+  .ants-icon-btn--primary {
     background-color: var(--accent-fill);
     color: var(--text-on-accent);
     box-shadow: var(--shadow-2);
   }
 
-  .winui-icon-btn--primary:hover {
+  .ants-icon-btn--primary:hover {
     background-color: var(--accent-default);
     box-shadow: var(--shadow-4);
   }
 
-  .winui-icon-btn--primary:active {
+  .ants-icon-btn--primary:active {
     background-color: var(--accent-dark);
     box-shadow: var(--shadow-0);
   }
