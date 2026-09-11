@@ -10,14 +10,14 @@ import (
 )
 
 var log *slog.Logger
-var closer io.Closer
+var rotator *Rotator
 
 // Setup initializes the global logger based on config.
 func Setup(cfg *config.LoggingConfig) {
 	// Close previous logger if any
-	if closer != nil {
-		closer.Close()
-		closer = nil
+	if rotator != nil {
+		rotator.Close()
+		rotator = nil
 	}
 
 	level := parseLevel(cfg.Level)
@@ -30,13 +30,9 @@ func Setup(cfg *config.LoggingConfig) {
 	writers = append(writers, os.Stdout)
 
 	if cfg.File != "" {
-		if err := os.MkdirAll(filepath.Dir(cfg.File), 0755); err == nil {
-			f, err := os.OpenFile(cfg.File,
-				os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-			if err == nil {
-				writers = append(writers, f)
-				closer = f
-			}
+		if r, err := NewRotator(cfg.File, cfg.MaxSizeMB); err == nil {
+			writers = append(writers, r)
+			rotator = r
 		}
 	}
 
@@ -63,9 +59,9 @@ func Get() *slog.Logger {
 
 // Close closes the log file if open.
 func Close() {
-	if closer != nil {
-		closer.Close()
-		closer = nil
+	if rotator != nil {
+		rotator.Close()
+		rotator = nil
 	}
 }
 
@@ -80,4 +76,20 @@ func parseLevel(s string) slog.Level {
 	default:
 		return slog.LevelInfo
 	}
+}
+
+// ArchiveActiveLog moves the current active log to its rotated path.
+// Called on graceful shutdown to ensure logs are properly archived.
+func ArchiveActiveLog() {
+	if rotator != nil {
+		rotator.mu.Lock()
+		rotator.rotate()
+		rotator.mu.Unlock()
+	}
+}
+
+// initLogDir ensures the logs directory exists relative to the executable.
+func initLogDir(path string) {
+	dir := filepath.Dir(path)
+	os.MkdirAll(dir, 0755)
 }

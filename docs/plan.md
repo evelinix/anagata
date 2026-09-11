@@ -17,7 +17,7 @@
 ### 1.2 Structured Logging
 - [x] Ganti `log.Println` → `log/slog` (stdlib) atau `zerolog`
 - [x] Output ke console + file (`logs/app.log`)
-- [ ] Log rotation (size-based atau time-based)
+- [x] Log rotation (size-based atau time-based)
 - [x] Log level configurable (debug/info/warn/error)
 - [x] Structured fields (request_id, user_id, dll)
 
