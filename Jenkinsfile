@@ -9,32 +9,55 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
+    triggers {
+        GenericTrigger(
+            genericVariables: [
+                [key: 'ref', value: '$.ref']
+            ],
+            token: 'sentinel-token',
+            causeString: 'Triggered by GitHub push to $ref',
+            printContributedVariables: true,
+            printPostContent: true
+        )
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Filter') {
             steps {
-                checkout scm
+                script {
+                    if (env.ref != 'refs/heads/main') {
+                        echo "Skipping build for branch: ${env.ref}"
+                        currentBuild.result = 'NOT_BUILT'
+                        currentBuild.description = 'Skipped - not main branch'
+                        env.SKIP_BUILD = 'true'
+                    }
+                }
+            }
+        }
+
+        stage('Checkout') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
+            steps {
+                git branch: 'main', url: 'https://github.com/evelinix/anagata.git'
             }
         }
 
         stage('Install') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
                 bat 'cd frontend && pnpm install --frozen-lockfile'
             }
         }
 
         stage('Build Frontend') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
                 bat 'cd frontend && pnpm build'
             }
         }
 
-        stage('Generate Bindings') {
-            steps {
-                bat 'wails generate module'
-            }
-        }
-
         stage('Lint') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             parallel {
                 stage('Go Lint') {
                     steps {
@@ -50,6 +73,7 @@ pipeline {
         }
 
         stage('Test') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             parallel {
                 stage('Go Test') {
                     steps {
@@ -65,12 +89,14 @@ pipeline {
         }
 
         stage('Build') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
                 bat 'wails build'
             }
         }
 
         stage('Package') {
+            when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
                 archiveArtifacts artifacts: 'build/bin/*.exe', fingerprint: true
             }

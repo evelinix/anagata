@@ -9,14 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **CI/CD Pipeline** (Phase 2.1)
-  - GitHub Actions CI workflow (`.github/workflows/ci.yml`)
-    - Lint job: golangci-lint + ESLint + Prettier
-    - Test job: Go tests + Vitest + svelte-check
-    - Build job: Wails build + artifact upload
-  - GitHub Actions Release workflow (`.github/workflows/release.yml`)
-    - Trigger on tag push (`v*`)
-    - Build Windows AMD64 + ARM64
-    - Auto-create GitHub Release with binaries
+  - Jenkins pipeline (`Jenkinsfile`)
+    - Stage: Checkout (version from git tags)
+    - Stage: Setup (Go, Node, pnpm, Wails CLI)
+    - Stage: Lint (parallel: golangci-lint, ESLint, Prettier)
+    - Stage: Test (parallel: Go tests, Vitest, svelte-check)
+    - Stage: Build (Wails build + version injection)
+    - Stage: Package (archive artifacts)
   - Detailed plan: `docs/cicd-plan.md`
 
 - **Auto-Updater: Download & Prompt** (Phase 3.4)

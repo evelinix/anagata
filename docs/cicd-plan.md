@@ -1,15 +1,15 @@
 # CI/CD Pipeline — Implementation Plan
 
 **Date:** 2026-09-12
-**Feature:** GitHub Actions CI/CD Pipeline
+**Feature:** Jenkins CI/CD Pipeline
 
 ---
 
 ## Overview
 
-Membuat 2 GitHub Actions workflows:
-1. **CI Pipeline** — Lint, test, build setiap push/PR
-2. **Release Pipeline** — Build & upload binaries saat tag release
+Membuat Jenkins pipeline untuk AnagataSentinel:
+1. **CI Pipeline** — Lint, test, build setiap commit
+2. **Windows Agent** — Karena Go dependencies hanya support Windows
 
 ---
 
@@ -24,205 +24,163 @@ Membuat 2 GitHub Actions workflows:
 | Linter config | ✅ READY | `.golangci.yml` dengan 20 linters |
 | Type checking | ✅ READY | `svelte-check` |
 | Version injection | ✅ READY | ldflags (version, commit, time) |
-| **CI pipeline** | ❌ MISSING | Belum ada `.github/workflows/` |
-| **Release automation** | ❌ MISSING | Belum ada release workflow |
+| **CI pipeline** | ✅ DONE | `Jenkinsfile` created |
 
 ---
 
-## File yang Perlu Dibuat
+## File yang Dibuat
 
 | # | File | Fungsi |
 |---|------|--------|
-| 1 | `.github/workflows/ci.yml` | CI pipeline (lint + test + build) |
-| 2 | `.github/workflows/release.yml` | Release pipeline (build + upload) |
+| 1 | `Jenkinsfile` | Jenkins pipeline definition |
 
 ---
 
-## Flow Diagram
-
-### CI Flow (Setiap Push/PR)
+## Pipeline Structure
 
 ```
-Push ke main/develop atau Buka PR
+Jenkins Pipeline
         ↓
 ┌───────────────────────────────────────────┐
-│  Job 1: LINT (parallel)                  │
-│  ├── golangci-lint (20 linters)          │
-│  ├── ESLint (frontend)                   │
-│  └── Prettier check                      │
+│  Stage 1: Checkout                        │
+│  ├── Clone repository                     │
+│  └── Set environment variables            │
 └───────────────────────────────────────────┘
         ↓
 ┌───────────────────────────────────────────┐
-│  Job 2: TEST (parallel)                  │
-│  ├── go test ./internal/...              │
-│  ├── Vitest (102 tests)                  │
-│  └── svelte-check (type safety)          │
+│  Stage 2: Setup                           │
+│  ├── Verify Go, Node, pnpm               │
+│  ├── Install Wails CLI                    │
+│  └── pnpm install --frozen-lockfile       │
 └───────────────────────────────────────────┘
         ↓
 ┌───────────────────────────────────────────┐
-│  Job 3: BUILD (needs lint+test pass)     │
-│  ├── wails build                         │
-│  └── Upload artifact (7 days retention)  │
-└───────────────────────────────────────────┘
-        ↓
-    All Pass? → Bisa merge PR
-```
-
-### Release Flow (Saat Tag `v*`)
-
-```
-git tag v0.2.0 && git push --tags
-        ↓
-┌───────────────────────────────────────────┐
-│  Build Windows AMD64                      │
-│  └── wails build -platform windows/amd64 │
+│  Stage 3: Lint (parallel)                 │
+│  ├── Go: golangci-lint                    │
+│  ├── Frontend: ESLint                     │
+│  └── Frontend: Prettier check             │
 └───────────────────────────────────────────┘
         ↓
 ┌───────────────────────────────────────────┐
-│  Build Windows ARM64                      │
-│  └── wails build -platform windows/arm64 │
+│  Stage 4: Test (parallel)                 │
+│  ├── Go: go test ./internal/...           │
+│  ├── Frontend: Vitest                     │
+│  └── Frontend: svelte-check               │
 └───────────────────────────────────────────┘
         ↓
 ┌───────────────────────────────────────────┐
-│  Create GitHub Release                    │
-│  ├── Upload: AnagataSentinel.exe          │
-│  └── Auto-generate release notes          │
+│  Stage 5: Build                           │
+│  └── wails build + version injection      │
 └───────────────────────────────────────────┘
         ↓
-    User bisa download dari Releases page
+┌───────────────────────────────────────────┐
+│  Stage 6: Package                         │
+│  └── Archive AnagataSentinel.exe          │
+└───────────────────────────────────────────┘
 ```
 
 ---
 
-## Workflow 1: CI Pipeline (`.github/workflows/ci.yml`)
+## Jenkins Setup Requirements
 
-### Trigger
-- Push ke branch `main` atau `develop`
-- Pull request ke branch `main`
+### Prerequisites
 
-### Permissions
-- `contents: read`
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Jenkins** | Latest LTS | CI server |
+| **Go** | 1.25.0+ | Build backend |
+| **Node.js** | 20 LTS | Build frontend |
+| **pnpm** | 9.x | Package manager frontend |
+| **Wails CLI** | v2.15.0 | Build desktop app |
+| **Git** | Latest | Source control |
+| **golangci-lint** | Latest | Go linter |
 
-### Jobs
+### Jenkins Plugins
 
-#### Job 1: `lint`
-- Runs on: `windows-latest`
-- Steps:
-  1. Checkout code
-  2. Setup Go 1.25
-  3. Run golangci-lint
-  4. Setup pnpm 9
-  5. Setup Node 20
-  6. Install frontend dependencies
-  7. Run ESLint
-  8. Run Prettier check
+| Plugin | Purpose |
+|--------|---------|
+| **Git** | Clone repository |
+| **Pipeline** | Jenkinsfile support |
+| **Pipeline: Stage View** | Visualisasi stage |
+| **NodeJS** | Node.js management |
 
-#### Job 2: `test`
-- Runs on: `windows-latest`
-- Steps:
-  1. Checkout code
-  2. Setup Go 1.25
-  3. Run Go tests (`go test ./internal/... -v`)
-  4. Setup pnpm 9
-  5. Setup Node 20
-  6. Install frontend dependencies
-  7. Run Vitest (`pnpm test`)
-  8. Run svelte-check
+### Jenkins Tools Configuration
 
-#### Job 3: `build`
-- Needs: `lint` + `test` (harus pass dulu)
-- Runs on: `windows-latest`
-- Steps:
-  1. Checkout code (full history untuk `git describe`)
-  2. Setup Go 1.25
-  3. Setup pnpm 9
-  4. Setup Node 20
-  5. Install Wails CLI
-  6. Install frontend dependencies
-  7. Build (`wails build`)
-  8. Upload artifact (7 hari retention)
+**Jenkins → Manage Jenkins → Tools**
+
+| Tool | Configuration |
+|------|---------------|
+| **Go** | Install Go 1.25.0, set GOROOT |
+| **NodeJS** | Install Node 20, set npm/pnpm |
+| **Git** | Default git path |
 
 ---
 
-## Workflow 2: Release Pipeline (`.github/workflows/release.yml`)
+## Pipeline Flow Diagram
 
-### Trigger
-- Push tag `v*` (contoh: `v0.2.0`, `v1.0.0`)
-
-### Permissions
-- `contents: write`
-
-### Jobs
-
-#### Job 1: `release`
-- Runs on: `windows-latest`
-- Steps:
-  1. Checkout code (full history)
-  2. Setup Go 1.25
-  3. Setup pnpm 9
-  4. Setup Node 20
-  5. Install Wails CLI
-  6. Install frontend dependencies
-  7. Build Windows AMD64
-  8. Build Windows ARM64
-  9. Get version dari tag
-  10. Create GitHub Release
-  11. Upload binaries sebagai release assets
-
----
-
-## Setup Requirements
-
-### 1. GitHub Repository Settings
-
-- Push repo ke GitHub (jika belum)
-- Settings → Actions → General → "Allow all actions and reusable workflows"
-- Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"
-
-### 2. Branch Protection (Optional tapi Recommended)
-
-- Settings → Branches → Add rule
-- Branch name pattern: `main`
-- ☑ Require a pull request before merging
-- ☑ Require status checks to pass before merging
-- Required status checks: `Lint`, `Test`, `Build`
-- ☑ Require branches to be up to date before merging
-
-### 3. Secrets (Tidak Wajib)
-
-Tidak perlu secrets untuk initial setup. GitHub Actions punya `GITHUB_TOKEN` bawaan untuk upload release.
+```
+Developer push ke main
+        ↓
+Jenkins trigger pipeline
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Checkout                          │
+│  ├── Clone repo                           │
+│  └── Set version from git tags            │
+└───────────────────────────────────────────┘
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Setup                             │
+│  ├── Verify Go, Node, pnpm               │
+│  ├── Install Wails CLI                    │
+│  └── pnpm install --frozen-lockfile       │
+└───────────────────────────────────────────┘
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Lint (parallel)                   │
+│  ├── golangci-lint (20 linters)           │
+│  ├── ESLint (frontend)                    │
+│  └── Prettier check                       │
+└───────────────────────────────────────────┘
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Test (parallel)                   │
+│  ├── go test ./internal/...               │
+│  ├── Vitest (102 tests)                   │
+│  └── svelte-check (type safety)           │
+└───────────────────────────────────────────┘
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Build                             │
+│  └── wails build + version injection      │
+└───────────────────────────────────────────┘
+        ↓
+┌───────────────────────────────────────────┐
+│  Stage: Package                           │
+│  └── Archive AnagataSentinel.exe          │
+└───────────────────────────────────────────┘
+        ↓
+    Build artifact tersimpan di Jenkins
+```
 
 ---
 
 ## Checklist Implementasi
 
-| # | Task | File | Status |
-|---|------|------|--------|
-| 1 | Buat `.github/workflows/` directory | — | ⬜ |
-| 2 | Buat `ci.yml` — lint + test + build jobs | `.github/workflows/ci.yml` | ⬜ |
-| 3 | Buat `release.yml` — build + upload | `.github/workflows/release.yml` | ⬜ |
-| 4 | Test CI pipeline (push ke main) | GitHub | ⬜ |
-| 5 | Test release pipeline (tag v0.2.0) | GitHub | ⬜ |
-| 6 | Update `docs/plan.md` | `docs/plan.md` | ⬜ |
-| 7 | Update `CHANGELOG.md` | `CHANGELOG.md` | ⬜ |
-
----
-
-## Estimasi Waktu
-
-| Task | Estimasi |
-|------|----------|
-| Buat CI workflow | 30 menit |
-| Buat Release workflow | 20 menit |
-| Test & debug | 30 menit |
-| **Total** | **~1.5 jam** |
+| # | Task | Status |
+|---|------|--------|
+| 1 | Buat `Jenkinsfile` | ✅ Done |
+| 2 | Install Jenkins di Windows server | ⬜ Pending |
+| 3 | Install plugins (Git, Pipeline, NodeJS) | ⬜ Pending |
+| 4 | Configure Go, Node, pnpm tools | ⬜ Pending |
+| 5 | Setup Windows agent | ⬜ Pending |
+| 6 | Test pipeline | ⬜ Pending |
 
 ---
 
 ## Notes
 
-- **Platform:** Windows only (sesuai current project scope). macOS/Linux bisa ditambah nanti.
-- **Go 1.25:** Pastikan GitHub Actions support Go 1.25.
-- **Wails CLI:** Perlu install `wails` CLI di CI runner.
-- **pnpm caching:** Menggunakan `pnpm/action-setup` + `actions/setup-node` dengan cache.
-- **Artifact retention:** Build artifact disimpan 7 hari (bisa diatur).
+- **Windows Agent Wajib** — Karena Go dependencies (`lxn/walk`, `lxn/win`) hanya support Windows
+- **WebView2 Runtime** — Pastikan terinstall di agent (biasanya sudah ada di Windows 10/11)
+- **Parallel Stages** — Lint dan Test jalan parallel untuk speed
+- **Version Injection** — Menggunakan git tags via `git describe --tags`

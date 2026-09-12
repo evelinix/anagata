@@ -32,8 +32,7 @@
 ## Phase 2: Developer Experience (Prioritas Sedang)
 
 ### 2.1 CI/CD Pipeline
-- [x] `.github/workflows/ci.yml` — lint + build + test
-- [x] `.github/workflows/release.yml` — build + upload assets
+- [x] `Jenkinsfile` — Jenkins pipeline (lint + build + test)
 - [ ] Dependabot untuk dependency updates
 - [ ] Conventional commits enforcement
 
@@ -116,7 +115,7 @@
 | Config | `log/slog` + YAML | Stdlib, zero dependency |
 | Logging | `log/slog` | Stdlib, structured, fast |
 | Migrations | `golang-migrate` | Industry standard |
-| CI/CD | GitHub Actions | Free for public repos |
+| CI/CD | Jenkins | Self-hosted, full control |
 | Linting | golangci-lint + ESLint | Industry standard |
 | Testing | Go testing + Vitest | Simple, fast |
 | i18n | svelte-i18n | Best for Svelte |
@@ -132,5 +131,5 @@
 | 2026-09-11 | Phase 2: Code Quality + Versioning + Migrations | ✅ Done |
 | 2026-09-11 | Phase 3: Dark Mode + i18n + Testing + Updater | ✅ Done |
 | 2026-09-12 | Auto-Updater: Download & Prompt + Auto-Restart | ✅ Done |
-| 2026-09-12 | CI/CD Pipeline: GitHub Actions (CI + Release) | ✅ Done |
+| 2026-09-12 | CI/CD Pipeline: Jenkins (lint + build + test) | ✅ Done |
 | - | Phase 4: Features | 🔲 Pending |
