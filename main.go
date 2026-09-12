@@ -7,6 +7,7 @@ import (
 	"AnagataSentinel/internal/app"
 	"AnagataSentinel/internal/config"
 	"AnagataSentinel/internal/logger"
+	"AnagataSentinel/internal/reporter"
 	"AnagataSentinel/internal/version"
 
 	"github.com/wailsapp/wails/v2"
@@ -31,7 +32,20 @@ func main() {
 		"commit", version.GitCommit[:min(8, len(version.GitCommit))],
 	)
 
+	var rep *reporter.Reporter
+	if cfg.Report.Enabled {
+		rep = reporter.New(cfg.Report.DSN)
+	} else {
+		rep = reporter.New("")
+	}
+
 	a := app.NewApp()
+
+	defer func() {
+		if rep != nil {
+			rep.Flush()
+		}
+	}()
 
 	err = wails.Run(&options.App{
 		Title:  cfg.App.Name,

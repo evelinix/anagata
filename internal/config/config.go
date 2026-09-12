@@ -14,6 +14,7 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	Logging  LoggingConfig  `yaml:"logging"`
 	Splash   SplashConfig   `yaml:"splash"`
+	Report   ReportConfig   `yaml:"report"`
 }
 
 type AppConfig struct {
@@ -45,6 +46,11 @@ type LoggingConfig struct {
 type SplashConfig struct {
 	Enabled  bool `yaml:"enabled"`
 	Duration int  `yaml:"duration_ms"`
+}
+
+type ReportConfig struct {
+	Enabled bool   `yaml:"enabled"`
+	DSN     string `yaml:"dsn"`
 }
 
 var cfg *Config
@@ -131,5 +137,9 @@ func applyEnvOverrides(cfg *Config) {
 	}
 	if v := os.Getenv("ANAGATA_LOG_LEVEL"); v != "" {
 		cfg.Logging.Level = v
+	}
+	if v := os.Getenv("ANAGATA_REPORT_DSN"); v != "" {
+		cfg.Report.DSN = v
+		cfg.Report.Enabled = true
 	}
 }
