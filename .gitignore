@@ -34,5 +34,5 @@ Thumbs.db
 *.prof
 
 # Wails generated
-frontend/wailsjs/
 frontend/package.json.md5
+credentials
