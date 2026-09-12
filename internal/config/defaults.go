@@ -28,5 +28,9 @@ func defaultConfig() *Config {
 			Enabled:  true,
 			Duration: 10000,
 		},
+		Report: ReportConfig{
+			Enabled: true,
+			DSN:     "https://241ee37658fca3cae3255e5435902c54@o4512071942406144.ingest.us.sentry.io/4512071947190272",
+		},
 	}
 }
