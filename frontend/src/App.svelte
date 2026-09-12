@@ -1,6 +1,12 @@
 <script lang="ts">
   import logo from './assets/images/logo-universal.png';
-  import { GetVersionInfo } from '../wailsjs/go/app/App';
+  import {
+    GetVersionInfo,
+    CheckForUpdate,
+    DownloadUpdate,
+    ApplyUpdate,
+  } from '../wailsjs/go/app/App';
+  import * as runtime from '../wailsjs/runtime/runtime';
   import { getTheme, toggleTheme, initTheme } from './lib/stores/theme';
   import { t, getLocale, setLocale } from './lib/i18n/index';
   import {
@@ -23,6 +29,9 @@
     IconAlertTriangle,
     IconFileText,
     IconBell,
+    IconInfoCircle,
+    IconDownload,
+    IconCheck,
   } from './lib/components/icons';
   import { createMockData } from './lib/stores/dashboard';
 
@@ -34,12 +43,42 @@
   let activeTab = $state<'dashboard' | 'scan' | 'alerts' | 'settings'>('dashboard');
   let dashboardData = $state(createMockData());
 
+  let showUpdateModal = $state(false);
+  let updateInfo = $state<Record<string, unknown> | null>(null);
+  let downloadProgress = $state<Record<string, unknown> | null>(null);
+  let updateStep = $state<'idle' | 'downloading' | 'downloaded' | 'applying'>('idle');
+  let updateError = $state<string | null>(null);
+
   $effect(() => {
     initTheme();
     currentTheme = getTheme();
     GetVersionInfo().then((info: Record<string, string>) => {
       versionInfo = info;
     });
+
+    const offUpdateAvailable = runtime.EventsOn('update-available', (...args: unknown[]) => {
+      const data = args[0] as Record<string, unknown>;
+      updateInfo = data;
+      showUpdateModal = true;
+      updateStep = 'idle';
+      updateError = null;
+    });
+
+    const offUpdateProgress = runtime.EventsOn('update-progress', (...args: unknown[]) => {
+      const data = args[0] as Record<string, unknown>;
+      downloadProgress = data;
+      if (data.status === 'completed') {
+        updateStep = 'downloaded';
+      } else if (data.status === 'error') {
+        updateStep = 'idle';
+        updateError = (data.error as string) || 'Download failed';
+      }
+    });
+
+    const offUpdateApplied = runtime.EventsOn('update-applied', () => {
+      updateStep = 'applying';
+    });
+
     const onLocale = (e: Event) => {
       locale = (e as CustomEvent).detail;
       localeVersion++;
@@ -47,9 +86,14 @@
     const onTheme = (e: Event) => {
       currentTheme = (e as CustomEvent).detail;
     };
+
     window.addEventListener('localechange', onLocale);
     window.addEventListener('themechange', onTheme);
+
     return () => {
+      offUpdateAvailable();
+      offUpdateProgress();
+      offUpdateApplied();
       window.removeEventListener('localechange', onLocale);
       window.removeEventListener('themechange', onTheme);
     };
@@ -71,6 +115,49 @@
 
   function refreshData() {
     dashboardData = createMockData();
+  }
+
+  function dismissUpdate() {
+    showUpdateModal = false;
+    updateInfo = null;
+    updateStep = 'idle';
+    downloadProgress = null;
+    updateError = null;
+  }
+
+  async function downloadUpdate() {
+    updateStep = 'downloading';
+    updateError = null;
+    downloadProgress = { percent: 0, status: 'downloading' };
+    try {
+      await DownloadUpdate();
+    } catch (e) {
+      updateStep = 'idle';
+      updateError = String(e);
+    }
+  }
+
+  async function applyUpdate() {
+    updateStep = 'applying';
+    try {
+      await ApplyUpdate();
+    } catch (e) {
+      updateStep = 'downloaded';
+      updateError = String(e);
+    }
+  }
+
+  async function checkForUpdate() {
+    try {
+      const result = await CheckForUpdate();
+      if (result && (result as Record<string, unknown>).available) {
+        updateInfo = result as Record<string, unknown>;
+        showUpdateModal = true;
+        updateStep = 'idle';
+      }
+    } catch (e) {
+      void e;
+    }
   }
 
   type Tab = 'dashboard' | 'scan' | 'alerts' | 'settings';
@@ -116,6 +203,151 @@
         </IconButton>
       </div>
     </header>
+
+    <!-- Update Modal -->
+    {#if showUpdateModal && updateInfo}
+      <div
+        class="fixed inset-0 flex items-center justify-center z-50"
+        style="background-color: rgba(0,0,0,0.5);"
+        onclick={dismissUpdate}
+        role="presentation"
+      >
+        <div
+          class="rounded-lg shadow-xl"
+          style="background-color: var(--bg-layer-default); max-width: 420px; width: 90%; border: 1px solid var(--stroke-subtle);"
+          onclick={(e) => e.stopPropagation()}
+          onkeydown={(e) => {
+            if (e.key === 'Escape') dismissUpdate();
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={tl('update.title')}
+          tabindex="-1"
+        >
+          <!-- Modal Header -->
+          <div
+            class="flex items-center justify-between px-5 py-4"
+            style="border-bottom: 1px solid var(--stroke-subtle);"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                style="width: 32px; height: 32px; border-radius: var(--radius-md); background-color: var(--accent-subtle); display: flex; align-items: center; justify-content: center;"
+              >
+                <IconInfoCircle size={18} stroke={2} style="color: var(--accent-default);" />
+              </div>
+              <Typography variant="subtitle" weight="semibold">{tl('update.title')}</Typography>
+            </div>
+            <IconButton
+              variant="transparent"
+              size="sm"
+              label={tl('update.dismiss')}
+              onclick={dismissUpdate}
+            >
+              <IconInfoCircle size={14} stroke={2} />
+            </IconButton>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="px-5 py-4">
+            <Typography variant="body" color="secondary" class="mb-3">
+              {tl('update.description')}
+            </Typography>
+            <div class="px-3 py-2 rounded-md mb-3" style="background-color: var(--bg-layer-alt);">
+              <Typography variant="body-strong" color="accent">
+                v{String(updateInfo.version || '')}
+              </Typography>
+              {#if updateInfo.description}
+                <Typography
+                  variant="caption"
+                  color="secondary"
+                  class="mt-1"
+                  style="white-space: pre-wrap;"
+                >
+                  {String(updateInfo.description)}
+                </Typography>
+              {/if}
+            </div>
+
+            {#if updateError}
+              <div
+                class="px-3 py-2 rounded-md mb-3"
+                style="background-color: var(--status-critical-subtle, rgba(239,68,68,0.1));"
+              >
+                <Typography variant="caption" color="critical">
+                  {tl('update.error')}: {updateError}
+                </Typography>
+              </div>
+            {/if}
+
+            {#if updateStep === 'downloading' && downloadProgress}
+              <div class="mb-3">
+                <div class="flex items-center justify-between mb-2">
+                  <Typography variant="caption" color="secondary">
+                    {tl('update.downloading')}
+                  </Typography>
+                  <Typography variant="caption" color="secondary">
+                    {String(downloadProgress.percent || 0)}%
+                  </Typography>
+                </div>
+                <div
+                  class="w-full rounded-full"
+                  style="height: 6px; background-color: var(--bg-layer-alt);"
+                >
+                  <div
+                    class="rounded-full"
+                    style="height: 6px; background-color: var(--accent-default); transition: width 0.3s ease; width: {String(
+                      downloadProgress.percent || 0,
+                    )}%;"
+                  ></div>
+                </div>
+              </div>
+            {/if}
+
+            {#if updateStep === 'applying'}
+              <div class="flex items-center gap-2 mb-3">
+                <div
+                  class="animate-spin"
+                  style="width: 16px; height: 16px; border: 2px solid var(--stroke-subtle); border-top-color: var(--accent-default); border-radius: 50%;"
+                ></div>
+                <Typography variant="caption" color="secondary">
+                  {tl('update.downloading')}
+                </Typography>
+              </div>
+            {/if}
+          </div>
+
+          <!-- Modal Footer -->
+          <div
+            class="flex items-center justify-end gap-2 px-5 py-3"
+            style="border-top: 1px solid var(--stroke-subtle);"
+          >
+            <Button variant="ghost" size="sm" onclick={dismissUpdate}>
+              {tl('update.later')}
+            </Button>
+
+            {#if updateStep === 'idle'}
+              <Button variant="primary" size="sm" onclick={downloadUpdate}>
+                <IconDownload size={14} stroke={2} />
+                {tl('update.download')}
+              </Button>
+            {:else if updateStep === 'downloading'}
+              <Button variant="primary" size="sm" disabled>
+                {tl('update.downloading')}
+              </Button>
+            {:else if updateStep === 'downloaded'}
+              <Button variant="primary" size="sm" onclick={applyUpdate}>
+                <IconCheck size={14} stroke={2} />
+                {tl('update.restartNow')}
+              </Button>
+            {:else if updateStep === 'applying'}
+              <Button variant="primary" size="sm" disabled>
+                {tl('update.downloading')}
+              </Button>
+            {/if}
+          </div>
+        </div>
+      </div>
+    {/if}
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-center px-6 py-10">
@@ -278,9 +510,15 @@
       class="flex items-center justify-between px-5 py-2"
       style="border-top: 1px solid var(--stroke-subtle); background-color: var(--bg-layer-alt);"
     >
-      <Typography variant="caption" color="tertiary">
-        v{versionInfo.version || '0.1.0'}
-      </Typography>
+      <button
+        class="cursor-pointer"
+        style="background: none; border: none; padding: 0;"
+        onclick={checkForUpdate}
+      >
+        <Typography variant="caption" color="tertiary" class="hover:underline">
+          v{versionInfo.version || '0.1.0'}
+        </Typography>
+      </button>
       <Typography variant="caption" color="tertiary">
         &copy; {new Date().getFullYear()}
         {tl('footer.copyright')}

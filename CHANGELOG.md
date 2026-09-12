@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **CI/CD Pipeline** (Phase 2.1)
+  - GitHub Actions CI workflow (`.github/workflows/ci.yml`)
+    - Lint job: golangci-lint + ESLint + Prettier
+    - Test job: Go tests + Vitest + svelte-check
+    - Build job: Wails build + artifact upload
+  - GitHub Actions Release workflow (`.github/workflows/release.yml`)
+    - Trigger on tag push (`v*`)
+    - Build Windows AMD64 + ARM64
+    - Auto-create GitHub Release with binaries
+  - Detailed plan: `docs/cicd-plan.md`
+
+- **Auto-Updater: Download & Prompt** (Phase 3.4)
+  - Modal dialog UI untuk notifikasi update (center-screen popup)
+  - Progress bar saat download (0% → 100%)
+  - Auto-restart dengan binary baru via batch script wrapper
+  - Manual check: klik version number di footer
+  - Wails event listeners untuk `update-available`, `update-progress`, `update-applied`
+  - i18n: Added `update.title`, `update.description`, `update.download`, `update.downloading`, `update.completed`, `update.restartNow`, `update.later`, `update.dismiss`, `update.error`, `update.checkForUpdate`, `update.checking`, `update.upToDate` to EN + ID locales
+  - New icons: `IconDownload`, `IconCheck`
+  - 3 new Go tests (ApplyUpdate, GetDownloadedFilePath)
+
 - **Dashboard** (Phase 4.1)
   - Sidebar navigation with Dashboard, Scan, Alerts, Settings tabs
   - StatusCard component for real-time monitoring widgets (CPU, Memory, Network, Disk)
@@ -38,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Card` — 4 variants (default, filled, outlined, acrylic)
   - `IconButton` — 4 variants, 3 sizes, icon-only (aria-label only)
   - `Typography` — 12 variants, 9 colors, dynamic HTML element, auto-weight for strong variants
-  - `icons/` — 11 SVG icon components (IconBase + individual icons)
+  - `icons/` — 13 SVG icon components (IconBase + individual icons)
 
 - **Date/time/number formatting** (`frontend/src/lib/i18n/format.ts`)
   - `formatDate`, `formatDateShort`, `formatTime`, `formatDateTime`
@@ -52,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `vite.config.ts` with `resolve.conditions: ['browser']`
   - `src/vitest-setup.ts` with cleanup + jest-dom matchers
   - `src/vite-env.d.ts` with Svelte type references + asset declarations
-  - 81 total tests across 7 test files
+  - 102 total tests across 11 test files
 
 - **Custom i18n system** (`frontend/src/lib/i18n/`)
   - Custom implementation with `CustomEvent` dispatch (replaced svelte-i18n)
@@ -71,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Icon system**: Replaced `@tabler/icons-svelte` (incompatible with Svelte 5 runes) with custom SVG icon components
   - `IconBase.svelte` — shared SVG wrapper with size/stroke/color/style props
-  - 11 individual icon components using IconBase
+  - 13 individual icon components using IconBase
   - All icons support `style` prop for inline color overrides
 
 - **Typography component** used throughout `App.svelte`

@@ -32,8 +32,8 @@
 ## Phase 2: Developer Experience (Prioritas Sedang)
 
 ### 2.1 CI/CD Pipeline
-- [ ] `.github/workflows/ci.yml` — lint + build + test
-- [ ] `.github/workflows/release.yml` — build + upload assets
+- [x] `.github/workflows/ci.yml` — lint + build + test
+- [x] `.github/workflows/release.yml` — build + upload assets
 - [ ] Dependabot untuk dependency updates
 - [ ] Conventional commits enforcement
 
@@ -80,7 +80,8 @@
 
 ### 3.4 Auto-Updater
 - [x] Check GitHub releases periodically (1 hour interval)
-- [ ] Download & prompt update
+- [x] Download & prompt update (modal dialog + progress bar)
+- [x] Auto-restart with new binary (batch script wrapper)
 - [ ] Silent update option
 - [ ] Update changelog display
 
@@ -130,4 +131,6 @@
 | 2026-09-11 | Phase 1: Config + Logging + Error UI | ✅ Done |
 | 2026-09-11 | Phase 2: Code Quality + Versioning + Migrations | ✅ Done |
 | 2026-09-11 | Phase 3: Dark Mode + i18n + Testing + Updater | ✅ Done |
+| 2026-09-12 | Auto-Updater: Download & Prompt + Auto-Restart | ✅ Done |
+| 2026-09-12 | CI/CD Pipeline: GitHub Actions (CI + Release) | ✅ Done |
 | - | Phase 4: Features | 🔲 Pending |

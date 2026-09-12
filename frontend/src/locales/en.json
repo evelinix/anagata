@@ -46,5 +46,20 @@
   },
   "footer": {
     "copyright": "AnagataSentinel"
+  },
+  "update": {
+    "title": "Update Available",
+    "version": "Version {{version}} is available",
+    "description": "A new version of AnagataSentinel is ready to install.",
+    "checkForUpdate": "Check for Update",
+    "download": "Download Update",
+    "downloading": "Downloading...",
+    "completed": "Download complete",
+    "restartNow": "Restart Now",
+    "later": "Later",
+    "dismiss": "Dismiss",
+    "error": "Update failed",
+    "checking": "Checking for updates...",
+    "upToDate": "You're up to date"
   }
 }

@@ -46,5 +46,20 @@
   },
   "footer": {
     "copyright": "AnagataSentinel"
+  },
+  "update": {
+    "title": "Update Tersedia",
+    "version": "Versi {{version}} tersedia",
+    "description": "Versi baru AnagataSentinel siap diinstal.",
+    "checkForUpdate": "Periksa Update",
+    "download": "Unduh Update",
+    "downloading": "Mengunduh...",
+    "completed": "Unduhan selesai",
+    "restartNow": "Mulai Ulang Sekarang",
+    "later": "Nanti",
+    "dismiss": "Tutup",
+    "error": "Update gagal",
+    "checking": "Memeriksa update...",
+    "upToDate": "Versi terbaru"
   }
 }

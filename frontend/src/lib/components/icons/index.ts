@@ -9,3 +9,5 @@ export { default as IconChartBar } from './IconChartBar.svelte';
 export { default as IconAlertTriangle } from './IconAlertTriangle.svelte';
 export { default as IconFileText } from './IconFileText.svelte';
 export { default as IconBell } from './IconBell.svelte';
+export { default as IconDownload } from './IconDownload.svelte';
+export { default as IconCheck } from './IconCheck.svelte';

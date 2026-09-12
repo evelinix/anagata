@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -25,10 +27,12 @@ type App struct {
 	splash  *splash.NativeSplash
 	checker *updater.Checker
 
-	startupError *apperrors.AppError
-	backendReady chan struct{}
-	domReady     chan struct{}
-	initOnce     sync.Once
+	startupError   *apperrors.AppError
+	backendReady   chan struct{}
+	domReady       chan struct{}
+	initOnce       sync.Once
+	pendingRelease *updater.Release
+	downloadDir    string
 }
 
 func NewApp() *App {
@@ -111,8 +115,16 @@ func (a *App) bootSecurity() error {
 func (a *App) bootServices() error {
 	if a.config != nil {
 		a.checker = updater.NewChecker("AnagataSentinel", "AnagataSentinel")
+		a.downloadDir = filepath.Join(os.TempDir(), "AnagataSentinel-updates")
 		a.checker.StartPeriodicCheck(1*time.Hour, func(release *updater.Release) {
 			slog.Info("update available", "version", release.TagName)
+			a.pendingRelease = release
+			runtime.EventsEmit(a.ctx, "update-available", map[string]interface{}{
+				"version":     release.TagName,
+				"name":        release.Name,
+				"url":         release.HTMLURL,
+				"description": release.Body,
+			})
 		})
 	}
 	return nil
@@ -205,11 +217,114 @@ func (a *App) CheckForUpdate() (map[string]interface{}, error) {
 		}, nil
 	}
 
+	a.pendingRelease = release
+
 	return map[string]interface{}{
 		"available":   true,
 		"version":     release.TagName,
 		"name":        release.Name,
 		"url":         release.HTMLURL,
 		"description": release.Body,
+	}, nil
+}
+
+func (a *App) DownloadUpdate() (map[string]interface{}, error) {
+	if a.checker == nil {
+		return map[string]interface{}{
+			"success": false,
+			"error":   "updater not initialized",
+		}, nil
+	}
+
+	if a.pendingRelease == nil {
+		available, release, err := a.checker.IsUpdateAvailable()
+		if err != nil {
+			return map[string]interface{}{
+				"success": false,
+				"error":   err.Error(),
+			}, nil
+		}
+		if !available {
+			return map[string]interface{}{
+				"success": false,
+				"error":   "no update available",
+			}, nil
+		}
+		a.pendingRelease = release
+	}
+
+	filePath, err := a.checker.DownloadUpdate(a.pendingRelease, a.downloadDir, func(progress updater.DownloadProgress) {
+		runtime.EventsEmit(a.ctx, "update-progress", progress)
+	})
+	if err != nil {
+		slog.Error("download update failed", "error", err)
+		return map[string]interface{}{
+			"success": false,
+			"error":   err.Error(),
+		}, nil
+	}
+
+	return map[string]interface{}{
+		"success":   true,
+		"file_path": *filePath,
+		"version":   a.pendingRelease.TagName,
+	}, nil
+}
+
+func (a *App) GetPendingRelease() map[string]interface{} {
+	if a.pendingRelease == nil {
+		return map[string]interface{}{
+			"available": false,
+		}
+	}
+	return map[string]interface{}{
+		"available":   true,
+		"version":     a.pendingRelease.TagName,
+		"name":        a.pendingRelease.Name,
+		"url":         a.pendingRelease.HTMLURL,
+		"description": a.pendingRelease.Body,
+	}
+}
+
+func (a *App) ApplyUpdate() (map[string]interface{}, error) {
+	if a.checker == nil {
+		return map[string]interface{}{
+			"success": false,
+			"error":   "updater not initialized",
+		}, nil
+	}
+
+	if a.pendingRelease == nil {
+		return map[string]interface{}{
+			"success": false,
+			"error":   "no pending release",
+		}, nil
+	}
+
+	filePath, found := a.checker.GetDownloadedFilePath(a.pendingRelease)
+	if !found || filePath == "" {
+		return map[string]interface{}{
+			"success": false,
+			"error":   "downloaded file not found, please download again",
+		}, nil
+	}
+
+	slog.Info("applying update", "version", a.pendingRelease.TagName, "path", filePath)
+
+	if err := a.checker.ApplyUpdate(filePath); err != nil {
+		slog.Error("apply update failed", "error", err)
+		return map[string]interface{}{
+			"success": false,
+			"error":   err.Error(),
+		}, nil
+	}
+
+	runtime.EventsEmit(a.ctx, "update-applied", map[string]interface{}{
+		"version": a.pendingRelease.TagName,
+	})
+
+	return map[string]interface{}{
+		"success": true,
+		"version": a.pendingRelease.TagName,
 	}, nil
 }
