@@ -25,11 +25,20 @@ pipeline {
         stage('Filter') {
             steps {
                 script {
-                    if (env.ref != 'refs/heads/main') {
-                        echo "Skipping build for branch: ${env.ref}"
+                    env.IS_TAG = env.ref?.startsWith('refs/tags/') ? 'true' : 'false'
+                    env.TAG_NAME = env.IS_TAG == 'true' ? env.ref.replace('refs/tags/', '') : ''
+                    env.IS_RELEASE = env.IS_TAG
+
+                    if (env.IS_TAG != 'true' && env.ref != 'refs/heads/main') {
+                        echo "Skipping build for: ${env.ref}"
                         currentBuild.result = 'NOT_BUILT'
-                        currentBuild.description = 'Skipped - not main branch'
+                        currentBuild.description = 'Skipped - not main or tag'
                         env.SKIP_BUILD = 'true'
+                    }
+
+                    if (env.IS_TAG == 'true') {
+                        echo "Release build for tag: ${env.TAG_NAME}"
+                        currentBuild.description = "Release ${env.TAG_NAME}"
                     }
                 }
             }
@@ -99,6 +108,54 @@ pipeline {
             when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
                 archiveArtifacts artifacts: 'build/bin/*.exe', fingerprint: true
+            }
+        }
+
+        stage('Release') {
+            when {
+                allOf {
+                    environment name: 'IS_RELEASE', value: 'true'
+                    not { environment name: 'SKIP_BUILD', value: 'true' }
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-pat', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    powershell """
+                        \$tagName = '${env.TAG_NAME}'
+                        \$releaseName = "AnagataSentinel \$tagName"
+                        \$exePath = 'build\\bin\\AnagataSentinel.exe'
+                        \$headers = @{
+                            Authorization = "token \$env:GH_TOKEN"
+                            Accept = 'application/vnd.github+json'
+                        }
+
+                        Write-Host "Creating release: \$releaseName"
+
+                        \$body = @{
+                            tag_name = \$tagName
+                            name = \$releaseName
+                            body = "## AnagataSentinel " + \$tagName + "`n`n### Changes`n- See commit history for details`n`n### Download`n- Download AnagataSentinel.exe below"
+                            draft = \$false
+                            prerelease = \$false
+                        } | ConvertTo-Json -Depth 3
+
+                        \$release = Invoke-RestMethod -Uri 'https://api.github.com/repos/evelinix/anagata/releases' -Method Post -Headers \$headers -Body \$body -ContentType 'application/json'
+                        Write-Host "Release created: \$release.html_url"
+
+                        Write-Host "Uploading AnagataSentinel.exe..."
+                        \$baseUrl = \$release.upload_url.Split('{')[0]
+                        \$uploadUrl = \$baseUrl + '?name=AnagataSentinel.exe'
+                        \$fileBytes = [System.IO.File]::ReadAllBytes(\$exePath)
+                        \$uploadHeaders = @{
+                            Authorization = "token \$env:GH_TOKEN"
+                            Content-Type = 'application/octet-stream'
+                        }
+                        Invoke-RestMethod -Uri \$uploadUrl -Method Post -Headers \$uploadHeaders -Body \$fileBytes
+
+                        Write-Host "Upload complete!"
+                        Write-Host "URL: \$release.html_url"
+                    """
+                }
             }
         }
     }
