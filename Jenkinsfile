@@ -38,7 +38,7 @@ pipeline {
         stage('Checkout') {
             when { not { environment name: 'SKIP_BUILD', value: 'true' } }
             steps {
-                git branch: 'main', url: 'https://github.com/evelinix/anagata.git'
+                git branch: 'main', url: 'https://github.com/evelinix/anagata.git', credentialsId: 'github-pat'
             }
         }
 
