@@ -8,6 +8,8 @@ import (
 	"runtime/debug"
 	"sync"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 )
 
 type Level int
@@ -40,13 +42,21 @@ func New(dsn string) *Reporter {
 		filePath: getReportPath(),
 	}
 
-	r.setupPanicHandler()
-
 	if dsn != "" {
-		slog.Info("error reporter initialized", "provider", "sentry")
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn:              dsn,
+			TracesSampleRate: 0.1,
+		})
+		if err != nil {
+			slog.Error("failed to init sentry", "error", err)
+		} else {
+			slog.Info("error reporter initialized", "provider", "sentry")
+		}
 	} else {
 		slog.Info("error reporter initialized", "provider", "file", "path", r.filePath)
 	}
+
+	r.setupPanicHandler()
 
 	return r
 }
@@ -113,13 +123,32 @@ func (r *Reporter) setupPanicHandler() {
 						"stack": string(stack),
 					},
 				)
+
+				sentry.Flush(2 * time.Second)
 			}
 		}()
 	}()
 }
 
 func (r *Reporter) sendToSentry(report *Report) {
-	slog.Debug("would send to sentry", "message", report.Message)
+	hub := sentry.CurrentHub().Clone()
+
+	scope := hub.Scope()
+	scope.SetLevel(toSentryLevel(report.Level))
+
+	if report.Extra != nil {
+		extras := make(map[string]sentry.Context)
+		for k, v := range report.Extra {
+			extras[k] = sentry.Context{"value": v}
+		}
+		scope.SetContexts(extras)
+	}
+
+	if report.Err != nil {
+		hub.CaptureException(report.Err)
+	} else {
+		hub.CaptureMessage(report.Message)
+	}
 }
 
 func (r *Reporter) writeToFile(report *Report) {
@@ -158,8 +187,25 @@ func (r *Reporter) Flush() {
 		return
 	}
 
+	if r.dsn != "" {
+		sentry.Flush(2 * time.Second)
+	}
+
 	slog.Info("flushing error reports", "count", len(r.buffer))
 	r.buffer = nil
+}
+
+func toSentryLevel(level Level) sentry.Level {
+	switch level {
+	case LevelError:
+		return sentry.LevelError
+	case LevelWarning:
+		return sentry.LevelWarning
+	case LevelInfo:
+		return sentry.LevelInfo
+	default:
+		return sentry.LevelError
+	}
 }
 
 func (l Level) String() string {
