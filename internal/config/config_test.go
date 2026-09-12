@@ -64,15 +64,22 @@ func TestConfigDir(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Config should be in executable's directory
 	exe, err := os.Executable()
 	if err != nil {
 		t.Skip("cannot get executable path")
 	}
 
-	expected := filepath.Dir(exe)
-	if dir != expected {
-		t.Errorf("expected dir '%s', got '%s'", expected, dir)
+	if portable {
+		expected := filepath.Dir(exe)
+		if dir != expected {
+			t.Errorf("expected dir '%s', got '%s'", expected, dir)
+		}
+	} else {
+		home, _ := os.UserHomeDir()
+		expected := filepath.Join(home, "AppData", "Roaming", "AnagataSentinel")
+		if dir != expected {
+			t.Errorf("expected dir '%s', got '%s'", expected, dir)
+		}
 	}
 
 	if _, err := os.Stat(dir); os.IsNotExist(err) {

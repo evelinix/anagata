@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -53,17 +54,30 @@ type ReportConfig struct {
 	DSN     string `yaml:"dsn"`
 }
 
-var cfg *Config
+var (
+	cfg      *Config
+	portable bool
+	dataDir  string
+)
 
 // Load reads config from file and applies env overrides.
-// If no config file exists, defaults are used.
+// Portable mode: config.yaml next to exe
+// Installed mode: %APPDATA%/AnagataSentinel/
 func Load() (*Config, error) {
 	cfg = defaultConfig()
+	portable = detectPortable()
 
-	path, err := configPath()
-	if err != nil {
+	if portable {
+		slog.Info("running in portable mode")
+	} else {
+		slog.Info("running in installed mode")
+	}
+
+	if err := setupDataDir(); err != nil {
 		return cfg, nil
 	}
+
+	path := configPath()
 
 	if _, err := os.Stat(path); err == nil {
 		data, err := os.ReadFile(path)
@@ -85,12 +99,19 @@ func Get() *Config {
 	return cfg
 }
 
+// IsPortable returns true if running in portable mode.
+func IsPortable() bool {
+	return portable
+}
+
+// DataDir returns the data directory (portable: exe dir, installed: %APPDATA%).
+func DataDir() string {
+	return dataDir
+}
+
 // Save writes the current config to file.
 func Save() error {
-	path, err := configPath()
-	if err != nil {
-		return err
-	}
+	path := configPath()
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
@@ -106,12 +127,9 @@ func Save() error {
 
 // Dir returns the config directory, creating it if needed.
 func Dir() (string, error) {
-	path, err := configPath()
-	if err != nil {
-		return "", err
-	}
-
+	path := configPath()
 	dir := filepath.Dir(path)
+
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
 	}
@@ -119,13 +137,40 @@ func Dir() (string, error) {
 	return dir, nil
 }
 
-func configPath() (string, error) {
+// detectPortable checks if config.yaml exists next to the executable.
+func detectPortable() bool {
 	exe, err := os.Executable()
 	if err != nil {
-		return "", err
+		return false
 	}
 
-	return filepath.Join(filepath.Dir(exe), "config.yaml"), nil
+	configPath := filepath.Join(filepath.Dir(exe), "config.yaml")
+	_, err = os.Stat(configPath)
+	return err == nil
+}
+
+// setupDataDir sets the data directory based on mode.
+func setupDataDir() error {
+	exe, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	if portable {
+		dataDir = filepath.Dir(exe)
+	} else {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+		dataDir = filepath.Join(home, "AppData", "Roaming", "AnagataSentinel")
+	}
+
+	return os.MkdirAll(dataDir, 0755)
+}
+
+func configPath() string {
+	return filepath.Join(dataDir, "config.yaml")
 }
 
 func applyEnvOverrides(cfg *Config) {
